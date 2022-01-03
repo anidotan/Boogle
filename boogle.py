@@ -9,6 +9,7 @@ def get_board_letters(words):
     columns = len(words[0])
     return [words[row][col] for col in range(columns) for row in range(rows)]
 
+
 def get_all_locations(board):
     rows = len(board)
     cols = len(board[0])
