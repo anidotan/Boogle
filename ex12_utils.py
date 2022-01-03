@@ -45,25 +45,23 @@ def path_is_legal(path, board) -> bool:
     """
     num_rows = len(board)
     num_cols = len(board[0])
-    flag_legal = True
 
-    previous_col = None
-    previous_row = None
+    prev_col = None
+    prev_row = None
 
-    if not are_there_duplicates(path):
-        for cell_tuple in path:
-            cur_row, cur_col = cell_tuple
-            # check all cells are in the board
-            if cur_row < 0 or cur_col < 0 or cur_row > num_rows - 1 or cur_col > num_cols - 1:
-                flag_legal = False
-            if previous_row is not None:
-                if abs(cur_row-previous_row) > 1 or abs(cur_col - previous_col) > 1:
-                    flag_legal = False
-            previous_row = cur_row
-            previous_col = cur_col
-    else:
-        flag_legal = False
-    return flag_legal
+    if are_there_duplicates(path):
+        return False
+    for cell_tuple in path:
+        cur_row, cur_col = cell_tuple
+        # check all cells are in the board
+        if cur_row < 0 or cur_col < 0 or cur_row > num_rows - 1 or cur_col > num_cols - 1:
+            return False
+        if prev_row is not None:
+            if abs(cur_row-prev_row) > 1 or abs(cur_col - prev_col) > 1:
+                return False
+        prev_row = cur_row
+        prev_col = cur_col
+    return True
 
 
 def find_length_n_paths(n, board, words):
@@ -79,7 +77,10 @@ def find_length_n_paths(n, board, words):
     :param words: words dict
     :return:
     """
+    # get list of all the tuples in the board
     all_board_locations = boogle.get_all_locations(board)
+    # all possible paths in the length of n
+    # todo - build something better - maybe recursion
     paths_combinations = list(itertools.combinations(all_board_locations, n))
     valid_paths = []
     for path in paths_combinations:
@@ -98,6 +99,7 @@ def find_length_n_words(n, board, words):
     :param words: list of all words
     :return: list of all the valid paths
     """
+    # get list of all the tuples in the board
     list_all_board_locations = boogle.get_all_locations(board)
     # counts how many cubes there are with two letters
     num_double_cubes = count_doubles_in_board(board)
@@ -111,9 +113,9 @@ def find_length_n_words(n, board, words):
             if path_is_legal(cur_path, board):
                 cur_word = word_from_path(cur_path, board)
                 if len(cur_word) == n and cur_word in words:
-                    valid_paths.append(cur_path)
+                    valid_paths.append(list(cur_path))
 
-        return valid_paths
+    return valid_paths
 
 
 def count_doubles_in_board(board):
@@ -134,7 +136,9 @@ def count_doubles_in_board(board):
     num_letters = len(all_letters_str)
     return num_letters - num_cells
 
+
 def max_score_paths(board, words):
+
     pass
 
 

@@ -6,6 +6,7 @@ board_1 = [['T', 'H', 'E', 'T'],
            ['V', 'U', 'F', 'U'],
            ['H', 'O', 'A', 'V']]
 
+
 def test_path_legal():
     path1 = [(0,0),(0,1)]
     assert path_is_legal(path1, board_1) is True
