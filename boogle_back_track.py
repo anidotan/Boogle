@@ -1,4 +1,4 @@
-def worm_walking(t_rows: int, t_cols: int, index: int, pos_moves: list, all_paths: list, cur_path: list, req_len: int, lst_all_cells: list):
+def old_worm_walking(t_rows: int, t_cols: int, index: int, pos_moves: list, all_paths: list, cur_path: list, req_len: int, lst_all_cells: list):
     # list cells [0, 1, 2, ..., 16]
     # possible_ moves [1, -1, +row_lem, -row_len, -row+1]
 
@@ -30,7 +30,38 @@ def worm_walking(t_rows: int, t_cols: int, index: int, pos_moves: list, all_path
     # cut_row, cur_col = (index // t_cols), (index % t_cols)
 
 
-def move_ok(sujested_move, )
+def worm_walking(t_rows: int, t_cols: int, index: int, pos_moves: list, all_paths: list, cur_path: list, req_len: int, lst_all_cells: list):
+    # list cells [0, 1, 2, ..., 16]
+    # possible_ moves [1, -1, +row_lem, -row_len, -row+1]
+
+    if len(cur_path) == req_len and cur_path not in all_paths:
+        copied_path = cur_path[::]
+        all_paths.append(copied_path)
+        last_item = cur_path.pop()
+        lst_all_cells[last_item] = last_item
+        return True
+
+    else:
+        # add the current to list
+        cur_path.append(index)
+        lst_all_cells[index] = None
+
+        for move in pos_moves:
+            new_index = index + move
+            if move_ok(new_index, all_cell):
+                finishd = worm_walking(t_rows, t_cols, new_index, pos_moves, all_paths, cur_path, req_len, lst_all_cells)
+            else:
+                return
+
+        last_item = cur_path.pop()
+        lst_all_cells[last_item] = last_item
+
+
+def move_ok(new_index, all_cells_content) -> bool:
+    if new_index < 0 or new_index > len(all_cells_content) or all_cells_content[new_index] is None:
+        return False
+    else:
+        return True
 
 
 def possible_moves(board) -> list:
