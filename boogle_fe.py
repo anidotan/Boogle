@@ -8,7 +8,8 @@ DEFAULT_TIME = '00:00'
 
 # todo: add cute cursor
 # todo: check if i am mixing grid and pack
-# todo: enry widgeet
+# todo: entry widgeet
+# todo: do we want a display widget?
 
 class Boogle_GUI:
     def __init__(self, board):
@@ -21,9 +22,12 @@ class Boogle_GUI:
 
         # general attributes
         self.__current_key = None
-        self.time = DEFAULT_TIME
+        self.__time = DEFAULT_TIME
         self.__word_ended = False
         self.__letters = {}
+        self.__message = ''
+        self.__chosen_words = []
+        self.__score = 0
 
         # build upper frame
         self._upper_frame = tk.Frame(root, bg=BG_COLOR1)
@@ -60,17 +64,26 @@ class Boogle_GUI:
                 cell.grid(row=row, column=col, padx=5, pady=5)
                 label = f'{self.__board[row][col]}'
                 letter = self.create_button(cell, row, col, label)
+                # print(row, col)
+                # letter.bind("<Button-1>", lambda event: print((row, col)))
+                # letter.configure(command=lambda: self.set_current_key((row, col)))
                 self.__letters[(row, col)] = letter
+                print(self.__letters)
 
-    def create_button(self, parent, row, col, label, rowspan: int = 1, columnspan: int = 1) -> tk.Button:
-        button = tk.Button(parent, text=label, **BUTTON_STYLE)
-        button.grid(row=row, column=col, pady=2, padx=2, sticky=tk.NSEW)
+        for loc, letter in self.__letters.items():
+            # print(loc)
+            letter.bind("<Button-1>", lambda loc: print(self.__letters.get(loc)))
+
+    def create_button(self, parent, row, col, label, rowspan: int = 1, columnspan: int = 1, sticky = tk.NSEW, command=None) -> tk.Button:
+        button = tk.Button(parent, text=label, command=command, **BUTTON_STYLE)
+        button.grid(row=row, column=col, pady=2, padx=2, rowspan=rowspan, columnspan=columnspan, sticky=sticky)
 
         def _on_enter(event: Any) -> None:
             button['background'] = BUTTON_HOVER_COLOR
 
         def _on_leave(event: Any) -> None:
             button['background'] = PRIMARY_BUTTON_COLOR
+
 
         button.bind("<Enter>", _on_enter)
         button.bind("<Leave>", _on_leave)
@@ -84,14 +97,13 @@ class Boogle_GUI:
         pass
 
 
-    ######## SETTERS ########
+    ######## SETTERS / PROP UPDATES ########
     def color_picked_letters(self, letters_picked: List[Tuple[int, int]]):
         # color the letters on the board + make them unclickable
         for loc in letters_picked:
             cur_letter = self.__letters[loc]
             self.color_button(cur_letter, LETTER_PICKED_COLOR)
             self.deactivate_button(cur_letter)
-
 
     def reactivate_buttons(self):
         for button in self.__letters.values():
@@ -121,7 +133,6 @@ class Boogle_GUI:
         # todo: only run when key is pressed. add an event of clicked on button - end
         self.__word_ended = True
 
-
     def update_chosen_words(self, words: List[str]):
         # show the chosen words
         self.__chosen_words = words
@@ -129,15 +140,10 @@ class Boogle_GUI:
     def update_message_box(self, message: str):
         # update the message box (error, congrats, etc)
         self.__message = message
-        pass
 
-    def set_pressed_key(self):
-        # todo: make private
-        """
-        event - get the key that is pressed now and set it in the init.
-        :return:
-        """
-
+    def set_current_key(self, key):
+        self.__current_key = key
+        print(f'key clicked: {key}')
 
 
     ######## GETTERS #######
@@ -163,10 +169,12 @@ class Boogle_GUI:
         else:
             button['state'] = tk.NORMAL
 
-
-
+    def handle_letter_clicked(self, button):
+        pass
+    """
     # def set_display(self, display_text: str) -> None:
     #     self._word_display_label["text"] = display_text
+    """
 
     def run(self) -> None:
         self._main_window.mainloop()
