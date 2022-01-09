@@ -7,10 +7,16 @@ class Boogle_brain:
         self._board = cur_board
         self._cur_word = ""
         self._pressed_tuples = []
-        self.last_press = None
+        self._last_press = None
         self._all_words_list = words_list
         self._words_found = []
         self._score = 0
+
+    def __str__(self):  # remove
+        total = ""
+        for row in self._board:
+            total = total + str(row) + "\n"
+        return total
 
     def letter_input(self, location: tuple[int, int]) -> bool:
         """
@@ -21,15 +27,15 @@ class Boogle_brain:
         cur_row, cur_col = location
         if not self._pressed_tuples:
             self._pressed_tuples.append(location)
-            self.last_press = location
+            self._last_press = location
             self._cur_word += self._board[cur_row][cur_col]
             return True
         else:
-            if not check_press_ok(self.last_press, location):
+            if not check_press_ok(self._last_press, location):  # todo - maybe i can delete this
                 return False
             else:
                 self._cur_word += self._board[cur_row][cur_col]
-                self.last_press = location
+                self._last_press = location
                 self._pressed_tuples.append(location)
                 return True
 
@@ -39,41 +45,40 @@ class Boogle_brain:
         :return: True - if word is correct, False- the words is not in the dictionary
         """
         cur_word = self._cur_word
+        num_cubes = len(self._pressed_tuples)
+        # reset the local variables
         self._cur_word = ""
+        self._last_press = None
+        self._pressed_tuples = []
+
         if cur_word in self._all_words_list:
+            # add the score and board
             self._words_found.append(cur_word)
-            self.last_press = None
-            num_cubes = len(self._pressed_tuples)
-            self._pressed_tuples = []
             self._score += num_cubes**2
             return True
         else:
-            # todo - set the status again
             return False
 
     def letters_colored_pressed(self) -> list[tuple]:
         """
-
         :return: list of tuples of all the words that should be colored as pressed ones
         """
         return self._pressed_tuples
 
     def letter_optional_color(self) -> list[tuple]:
         """
-
-        :return: list of tuples of all the letters that are
+        :return: list of tuples of all the letters that are optional to choose from
         """
         final_list = []
-        all_surrounding_tuples = surrounding_tuples(self._board, self.last_press)
+        all_surrounding_tuples = surrounding_tuples(self._board, self._last_press)
         for c_tuple in all_surrounding_tuples:
             if c_tuple not in self._pressed_tuples:
                 final_list.append(c_tuple)
 
         return final_list
 
-    def get_words_detected(self) -> list:
+    def get_words_detected_list(self) -> list:
         """
-
         :return: a list of all the words that has been found so far
         """
         return self._words_found
@@ -129,11 +134,25 @@ def list_change_coor(coor):
 
     return list_possible
 
+
 if __name__ == '__main__':
 
     b1 = [['T', 'H', 'E', 'T'],
           ['O', 'H', 'N', 'D'],
           ['V', 'U', 'F', 'U'],
           ['H', 'O', 'A', 'V']]
-
-    print(surrounding_tuples(b1, (1,0)))
+    list = ["THE"]
+    brain = Boogle_brain(b1, list)
+    for i in range(3):
+        print(brain.get_words_detected_list())
+        print(brain.letters_colored_pressed())
+        x = input("type x")
+        y= input("y")
+        z = tuple((int(x),int(y)))
+        print(z)
+        brain.letter_input(z)
+        # brain.letter_input((0, 1))
+        # brain.letter_input((0,2))
+    brain.finished_word()
+    print(brain.get_words_detected_list())
+    print(brain.letters_colored_pressed())
