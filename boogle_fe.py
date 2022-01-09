@@ -161,7 +161,8 @@ class Boogle_GUI:
 
     def update_chosen_words(self, words: List[str]):
         # show the chosen words
-        self._chosen_words = words
+        words_str = '\n'.join(words)
+        self._chosen_words.configure(text=words_str)
     #     todo: update the panel
 
     def update_message_box(self, message: str):
