@@ -7,6 +7,8 @@ class Boogle_brain:
         self._board = cur_board
         self._cur_word = ""
         self._pressed_tuples = []
+        self._possible_moves = []
+        self._disabled_buttons = []
         self.last_press = None
         self._all_words_list = words_list
         self._words_found = []
@@ -58,18 +60,18 @@ class Boogle_brain:
         """
         return self._pressed_tuples
 
-    def letter_optional_color(self) -> list[tuple]:
+    def letter_optional_color(self):
         """
 
         :return: list of tuples of all the letters that are
         """
-        final_list = []
         all_surrounding_tuples = surrounding_tuples(self._board, self.last_press)
         for c_tuple in all_surrounding_tuples:
             if c_tuple not in self._pressed_tuples:
-                final_list.append(c_tuple)
+                self._possible_moves.append(c_tuple)
 
-        return final_list
+    def update_letters_to_disable(self):
+
 
     def get_words_detected(self) -> list:
         """
