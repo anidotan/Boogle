@@ -77,8 +77,6 @@ class Boogle_GUI:
         button.grid(row=row, column=col, pady=2, padx=2, rowspan=rowspan, columnspan=columnspan, sticky=sticky)
         return button
 
-    def make_GUI(self, board):
-        pass
 
     def set_button_command(self, button_name: str, cmd: Callable[[], None]) -> None:
         self._buttons[button_name].configure(command=cmd)
@@ -89,7 +87,7 @@ class Boogle_GUI:
     def build_bottom_panel(self, parent):
         # todo: make private + self
         self._score = tk.Label(parent, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
-                         font=(FONT, 30, 'bold'))
+                         font=(FONT, 10, 'bold'))
         self._score.grid(row=0)
         self._message_box = tk.Label(parent, text=f'Message:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                font=(FONT, 15, 'bold'))

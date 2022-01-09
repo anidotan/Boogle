@@ -1,14 +1,14 @@
 from boogle_back_track import possible_moves
-
+from boogle import get_all_locations
 
 class Boogle_brain:
 
     def __init__(self, cur_board, words_list):
         self._board = cur_board
         self._cur_word = ""
-        self._pressed_tuples = []
-        self._possible_moves = []
-        self._disabled_buttons = []
+        self._pressed_tuples = set()
+        self._possible_moves = set()
+        self._disabled_buttons = set()
         self.last_press = None
         self._all_words_list = words_list
         self._words_found = []
@@ -28,9 +28,11 @@ class Boogle_brain:
         """
         cur_row, cur_col = location
         if not self._pressed_tuples:
-            self._pressed_tuples.append(location)
+            self._pressed_tuples.add(location)
             self._last_press = location
             self._cur_word += self._board[cur_row][cur_col]
+            all_tuples = all_locations_as_set(self._board)
+            self._disabled_buttons = all_tuples.remove(location)
             return True
         else:
             if not check_press_ok(self._last_press, location):  # todo - maybe i can delete this
@@ -38,7 +40,8 @@ class Boogle_brain:
             else:
                 self._cur_word += self._board[cur_row][cur_col]
                 self._last_press = location
-                self._pressed_tuples.append(location)
+                self._pressed_tuples.add(location)
+                self._disabled_buttons.remove(location)
                 return True
 
     def finished_word(self) -> bool:
@@ -51,7 +54,8 @@ class Boogle_brain:
         # reset the local variables
         self._cur_word = ""
         self._last_press = None
-        self._pressed_tuples = []
+        self._pressed_tuples.clear()
+        self._disabled_buttons.clear()
 
         if cur_word in self._all_words_list:
             # add the score and board
@@ -138,24 +142,36 @@ def list_change_coor(coor):
     return list_possible
 
 
+def all_locations_as_set(board):
+    final = set()
+    rows = len(board)
+    cols = len(board[0])
+    for x in range(cols):
+        for y in range(rows):
+            final.add(tuple((x, y)))
+
+    return final
+
 if __name__ == '__main__':
 
     b1 = [['T', 'H', 'E', 'T'],
           ['O', 'H', 'N', 'D'],
           ['V', 'U', 'F', 'U'],
           ['H', 'O', 'A', 'V']]
-    list = ["THE"]
-    brain = Boogle_brain(b1, list)
-    for i in range(3):
-        print(brain.get_words_detected_list())
-        print(brain.letters_colored_pressed())
-        x = input("type x")
-        y= input("y")
-        z = tuple((int(x),int(y)))
-        print(z)
-        brain.letter_input(z)
-        # brain.letter_input((0, 1))
-        # brain.letter_input((0,2))
-    brain.finished_word()
-    print(brain.get_words_detected_list())
-    print(brain.letters_colored_pressed())
+
+    print(all_locations_as_set(b1))
+    # list = ["THE"]
+    # brain = Boogle_brain(b1, list)
+    # for i in range(3):
+    #     print(brain.get_words_detected_list())
+    #     print(brain.letters_colored_pressed())
+    #     x = input("type x")
+    #     y= input("y")
+    #     z = tuple((int(x),int(y)))
+    #     print(z)
+    #     brain.letter_input(z)
+    #     # brain.letter_input((0, 1))
+    #     # brain.letter_input((0,2))
+    # brain.finished_word()
+    # print(brain.get_words_detected_list())
+    # print(brain.letters_colored_pressed())
