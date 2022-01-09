@@ -58,6 +58,7 @@ class Boogle_brain:
             return True
         else:
             return False
+        # todo - add somthing to ahppen when the word is wrong
 
     def letters_colored_pressed(self) -> list[tuple]:
         """
