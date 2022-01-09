@@ -7,7 +7,9 @@ class Boogle_brain:
         self._board = cur_board
         self._cur_word = ""
         self._pressed_tuples = []
-        self._last_press = None
+        self._possible_moves = []
+        self._disabled_buttons = []
+        self.last_press = None
         self._all_words_list = words_list
         self._words_found = []
         self._score = 0
