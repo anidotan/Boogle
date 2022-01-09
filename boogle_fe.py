@@ -41,7 +41,8 @@ class Boogle_GUI:
 
         self.build_top_grid(self._upper_frame)
         self.build_letter_grid(self._middle_frame)
-        self.build_bottom_panel(self._bottom_frame)
+        self.build_side_grid(self._middle_frame)
+        self.build_bottom_grid(self._bottom_frame)
 
     ######## BUILDERS ########
     # todo: do i want to use the self or now? - ASK TOMER
@@ -77,11 +78,11 @@ class Boogle_GUI:
         button.grid(row=row, column=col, pady=2, padx=2, rowspan=rowspan, columnspan=columnspan, sticky=sticky)
         return button
 
-    def build_bottom_panel(self, parent):
+    def build_bottom_grid(self, parent):
         # todo: make private + self
-        self._score = tk.Label(parent, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
-                         font=(FONT, 10, 'bold'))
-        self._score.grid(row=0)
+        # self._score = tk.Label(parent, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+        #                  font=(FONT, 10, 'bold'))
+        # self._score.grid(row=0)
         self._message_box = tk.Label(parent, text=f'Message:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                font=(FONT, 15, 'bold'))
         self._message_box.grid(row=1)
@@ -90,15 +91,16 @@ class Boogle_GUI:
         self._end_word.grid(row=2)
         self._buttons['end word'] = self._end_word
 
-    def build_side_frame(self, parent):
-        self._score = tk.Label(parent, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+    def build_side_grid(self, parent):
+        self._side_frame = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
+        self._side_frame.grid(row=0, column=1)
+        self._score = tk.Label(self._side_frame, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                font=(FONT, 20, 'bold'))
-        self._score.grid(row=0)
-        self._chosen_words_title = tk.Label(parent, text='Chosen Words:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR, font=(FONT, 15, 'bold'))
-        self._chosen_words_title.grid(row=1)
-        self._chosen_words = tk.Label(parent, text='', bg=TEXTBOX_BG_COLOR, fg=FONT_COLOR, font=(FONT, 10, 'bold'))
-        self._chosen_words = tk.Label(parent, )
-        self._chosen_words.grid(row=2)
+        self._score.grid(row=0, column=0)
+        self._chosen_words_title = tk.Label(self._side_frame, text='Chosen Words:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR, font=(FONT, 10, 'bold'))
+        self._chosen_words_title.grid(row=1, column=0)
+        self._chosen_words = tk.Label(self._side_frame, text='\n\n\n\n\n\n', bg=TEXTBOX_BG_COLOR, fg=FONT_COLOR, font=(FONT, 10, 'bold'))
+        self._chosen_words.grid(row=2, column=0)
 
     ######## SETTERS / PROP UPDATES ########
 
@@ -118,8 +120,9 @@ class Boogle_GUI:
     def color_and_disable_letters(self, letters_disabled: Set[Tuple[int, int]]):
         # color the letters on the board + make them unclickable
         for loc in letters_disabled:
-            self.color_button_by_loc(loc, LETTER_PICKED_COLOR)
+            self.color_button_by_loc(loc, LETTER_DISABLED_COLOR)
             cur_button = self._letters[loc]
+            print(f'type: {type(cur_button)}, {cur_button}')
             self.deactivate_button(cur_button)
 
     def reactivate_buttons(self):
