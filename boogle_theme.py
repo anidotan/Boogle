@@ -1,10 +1,12 @@
 import tkinter as tk
 DEFAULT_BG_COLOR = 'White'
+TEXTBOX_BG_COLOR = 'mint cream'
 BG_COLOR1 = 'mint cream'
 BG_COLOR2 = 'alice blue'
 LETTER_COLOR = 'LightSkyBlue1'
 LETTER_OPTION_COLOR = 'lavender blush'
 LETTER_PICKED_COLOR = 'ROYALBLUE4'
+LETTER_DISABLED_COLOR = 'grey'
 PRIMARY_BUTTON_COLOR = 'LightSkyBlue1'
 SECONDARY_BUTTON_COLOR = 'LightSkyBlue3'
 BUTTON_HOVER_COLOR = 'snow'
