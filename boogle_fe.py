@@ -144,7 +144,7 @@ class Boogle_GUI:
         button.configure(bg=new_color)
 
     def set_word_ended(self):
-        # todo: make it
+        # todo: doesn't change the word on the screen
         # todo: only run when key is pressed. add an event of clicked on button - end
         self.__word_ended = True
 
@@ -167,6 +167,7 @@ class Boogle_GUI:
         if self.__word_ended:
             word_ended_flag = self.__word_ended
             self.__word_ended = False
+            self.reactivate_buttons()
         return word_ended_flag
 
     def get_pressed_key(self) -> Optional[Tuple[int, int]]:
@@ -211,8 +212,9 @@ if __name__ == '__main__':
           ['H', 'O', 'A', 'V']]
     boggle = Boogle_GUI(b1)
     letters = boggle.get_letters()
-    boggle.color_picked_letters([(0,1), (0,0)])
-    boggle.color_possible_letters(([(1,1), (3,0)]))
+    # boggle.color_picked_letters([(0,1), (0,0)])
+    # boggle.color_possible_letters(([(1,1), (3,0)]))
+    boggle.set_score(10)
     boggle.run()
 
     # boggle.set_display("TEST MODE")
