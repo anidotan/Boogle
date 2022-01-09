@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import font
-from typing import Optional, Tuple, List, Dict, Any, Callable
+from typing import Optional, Tuple, List, Dict, Any, Callable, Set
 from boogle_theme import *
 
 DEFAULT_TIME = '00:00'
@@ -31,17 +31,18 @@ class Boogle_GUI:
         self._upper_frame = tk.Frame(root, bg=BG_COLOR1)
         self._upper_frame.grid(row=0)
 
-        # build lower frame
-        self._lower_frame = tk.Frame(root, bg=BG_COLOR2)
-        self._lower_frame.grid(row=1)
+        # build middle frame
+        self._middle_frame = tk.Frame(root, bg=BG_COLOR2)
+        self._middle_frame.grid(row=1)
 
-        # build footer frame
-        self._footer = tk.Frame(root, bg=BG_COLOR2)
-        self._footer.grid(row=2)
+        # build bottom frame
+        self._bottom_frame = tk.Frame(root, bg=BG_COLOR2)
+        self._bottom_frame.grid(row=2)
 
         self.build_top_grid(self._upper_frame)
-        self.build_letter_grid(self._lower_frame)
-        self.build_bottom_panel(self._footer)
+        self.build_letter_grid(self._middle_frame)
+        self.build_side_grid(self._middle_frame)
+        self.build_bottom_grid(self._bottom_frame)
 
     ######## BUILDERS ########
     # todo: do i want to use the self or now? - ASK TOMER
@@ -61,7 +62,7 @@ class Boogle_GUI:
 
     def build_letter_grid(self, parent):
         self._board_contrainer = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
-        self._board_contrainer.grid(row=0)
+        self._board_contrainer.grid(row=0, column=0)
         for row in range(4):
             for col in range(4):
                 cell = tk.Frame(self._board_contrainer, bg=DEFAULT_BG_COLOR, width=30, height=30)
@@ -77,18 +78,11 @@ class Boogle_GUI:
         button.grid(row=row, column=col, pady=2, padx=2, rowspan=rowspan, columnspan=columnspan, sticky=sticky)
         return button
 
-
-    def set_button_command(self, button_name: str, cmd: Callable[[], None]) -> None:
-        self._buttons[button_name].configure(command=cmd)
-
-    def set_letter_command(self, letter_loc: Tuple[int,int], cmd: Callable[[], None]):
-        self._letters[letter_loc].configure(command=cmd)
-
-    def build_bottom_panel(self, parent):
+    def build_bottom_grid(self, parent):
         # todo: make private + self
-        self._score = tk.Label(parent, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
-                         font=(FONT, 10, 'bold'))
-        self._score.grid(row=0)
+        # self._score = tk.Label(parent, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+        #                  font=(FONT, 10, 'bold'))
+        # self._score.grid(row=0)
         self._message_box = tk.Label(parent, text=f'Message:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                font=(FONT, 15, 'bold'))
         self._message_box.grid(row=1)
@@ -97,12 +91,38 @@ class Boogle_GUI:
         self._end_word.grid(row=2)
         self._buttons['end word'] = self._end_word
 
+    def build_side_grid(self, parent):
+        self._side_frame = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
+        self._side_frame.grid(row=0, column=1)
+        self._score = tk.Label(self._side_frame, text=f'Score:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+                               font=(FONT, 20, 'bold'))
+        self._score.grid(row=0, column=0)
+        self._chosen_words_title = tk.Label(self._side_frame, text='Chosen Words:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR, font=(FONT, 10, 'bold'))
+        self._chosen_words_title.grid(row=1, column=0)
+        self._chosen_words = tk.Label(self._side_frame, text='\n\n\n\n\n\n', bg=TEXTBOX_BG_COLOR, fg=FONT_COLOR, font=(FONT, 10, 'bold'))
+        self._chosen_words.grid(row=2, column=0)
+
     ######## SETTERS / PROP UPDATES ########
+
+    def set_button_command(self, button_name: str, cmd: Callable[[], None]) -> None:
+        self._buttons[button_name].configure(command=cmd)
+
+    def set_letter_command(self, letter_loc: Tuple[int,int], cmd: Callable[[], None]):
+        self._letters[letter_loc].configure(command=cmd)
+
     def color_picked_letters(self, letters_picked: List[Tuple[int, int]]):
         # color the letters on the board + make them unclickable
         for loc in letters_picked:
             self.color_button_by_loc(loc, LETTER_PICKED_COLOR)
             cur_button = self._letters[loc]
+            self.deactivate_button(cur_button)
+
+    def color_and_disable_letters(self, letters_disabled: Set[Tuple[int, int]]):
+        # color the letters on the board + make them unclickable
+        for loc in letters_disabled:
+            self.color_button_by_loc(loc, LETTER_DISABLED_COLOR)
+            cur_button = self._letters[loc]
+            print(f'type: {type(cur_button)}, {cur_button}')
             self.deactivate_button(cur_button)
 
     def reactivate_buttons(self):
@@ -141,7 +161,7 @@ class Boogle_GUI:
 
     def update_chosen_words(self, words: List[str]):
         # show the chosen words
-        self.__chosen_words = words
+        self._chosen_words = words
     #     todo: update the panel
 
     def update_message_box(self, message: str):
