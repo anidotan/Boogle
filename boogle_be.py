@@ -31,8 +31,8 @@ class Boogle_brain:
             self._pressed_tuples.add(location)
             self._last_press = location
             self._cur_word += self._board[cur_row][cur_col]
-            all_tuples = all_locations_as_set(self._board)
-            self._disabled_buttons = all_tuples.remove(location)
+            self._disabled_buttons = all_locations_as_set(self._board)
+            self._disabled_buttons.remove(location)
             return True
         else:
             if not check_press_ok(self._last_press, location):  # todo - maybe i can delete this
@@ -57,6 +57,7 @@ class Boogle_brain:
         self._pressed_tuples.clear()
         self._disabled_buttons.clear()
 
+
         if cur_word in self._all_words_list:
             # add the score and board
             self._words_found.append(cur_word)
@@ -76,13 +77,16 @@ class Boogle_brain:
         """
         :return: list of tuples of all the letters that are optional to choose from
         """
-        final_list = []
+        final_set = set()
         all_surrounding_tuples = surrounding_tuples(self._board, self._last_press)
         for c_tuple in all_surrounding_tuples:
             if c_tuple not in self._pressed_tuples:
-                final_list.append(c_tuple)
+                final_set.add(c_tuple)
 
-        return final_list
+        return final_set
+
+    def get_disabled_buttons(self):
+        return self._disabled_buttons
 
     def get_words_detected_list(self) -> list:
         """

@@ -36,7 +36,7 @@ class BoggleController:
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
         def fun() -> None:
-            self._brain.letter_input(button_loc)
+            # self._brain.letter_input(button_loc)
             # todo: do we need to do the default score?
             print(f'button in location: {button_loc}')
             self._brain.letter_input(button_loc)
@@ -61,8 +61,11 @@ class BoggleController:
 
     def update_board(self):
         self._gui.set_score(self._brain.get_score())
+        set_of_disabled = self._brain.get_disabled_buttons()
         self._gui.color_picked_letters(self._brain.letters_colored_pressed())
-        self._gui.color_possible_letters(self._brain.letter_optional_color())
+        set_of_optional = self._brain.letter_optional_color()
+        self._gui.color_possible_letters(set_of_optional)
+        self._gui.deactivate_button(set_of_disabled - set_of_optional)
 
 
     def run(self) -> None:
@@ -113,9 +116,9 @@ def run_single_game():
             game_gui.show_chosen_words(brain.get_words_detected_list())
 
 
-            location_pressed = game_gui.get_pressed_key() # get letter press
-            if location_pressed is not None:  # if a cube was chosen
-                brain.letter_input(location_pressed)
+            # location_pressed = game_gui.get_pressed_key() # get letter press
+            # if location_pressed is not None:  # if a cube was chosen
+            #     brain.letter_input(location_pressed)
 
 
 
