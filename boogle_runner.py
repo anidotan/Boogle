@@ -29,6 +29,9 @@ class BoggleController:
         for letter_location in letters.keys():
             action = self.create_letter_action(letter_location)
             self._gui.set_letter_command(letter_location, action)
+
+        end_word_action = self.create_finished_word_action('end word')
+        self._gui.set_button_command('end word', end_word_action)
         self._gui.set_score(self._brain.get_score())
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
@@ -47,6 +50,13 @@ class BoggleController:
             self._gui.reactivate_buttons()
             print('word finished!')
             # todo: do we need to do anything else?
+        return fun
+
+    def create_start_game_action(self, button_name: str) -> Callable[[], None]:
+        def fun() -> None:
+            self._brain.start_game()
+            self._gui.start_timer()
+            print('game started in 3....2...1....go!')
         return fun
 
     def update_board(self):
