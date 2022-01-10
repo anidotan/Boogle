@@ -48,6 +48,7 @@ class BoggleController:
 
         return fun
 
+    # todo: take off the irrelevant perameters
     def create_finished_word_action(self, button_name: str) -> Callable[[], None]:
         def fun() -> None:
             self._brain.finished_word()
