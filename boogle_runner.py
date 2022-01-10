@@ -70,8 +70,13 @@ class BoggleController:
         set_of_disabled = self._brain.get_disabled_buttons()
         self._gui.color_picked_letters(self._brain.letters_colored_pressed())
         set_of_optional = self._brain.letter_optional_color()
-        self._gui.color_optional_letters(set_of_optional)
-        self._gui.color_disabled_letters(set_of_disabled - set_of_optional)
+        self._gui.color_possible_letters(set_of_optional)
+        relevant_to_disable = set_of_disabled - set_of_optional
+        self._gui.color_and_disable_letters(relevant_to_disable)
+        print("disable", relevant_to_disable)
+        print("optional", set_of_optional)
+        print("pressed", self._brain.letters_colored_pressed())
+        print("len total should be 16", len(relevant_to_disable)+ len(set_of_optional)+len(self._brain.letters_colored_pressed()))
 
 
     def run(self) -> None:
