@@ -172,7 +172,7 @@ class Boogle_GUI:
         for button in self._letters.values():
             if button['state'] != tk.NORMAL:
                 self.deactivate_button(button, deactivate=False)
-                self.color_button(button, LETTER_COLOR)
+            self.color_button(button, LETTER_COLOR)
 
         # todo: maybe use this https://www.delftstack.com/howto/python-tkinter/how-to-change-tkinter-button-state/
 
@@ -212,7 +212,7 @@ class Boogle_GUI:
 
     def update_message_box(self, message: str):
         # update the message box (error, congrats, etc)
-        self._message_box.configure(text=f'Message: {message}')
+        self._message_box.configure(text=message)
 
     def set_current_key(self, key):
         self.__current_key = key
