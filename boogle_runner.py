@@ -68,13 +68,10 @@ class BoggleController:
             print('game started in 3....2...1....go!')
         return fun
 
-
     def update_board(self):
         self._gui.update_chosen_words(self._brain.get_words_detected_list())
         self._gui.set_score(self._brain.get_score())
         self._gui.update_message_box(self._brain.get_message())
-        cur_time = time.time()
-        self._gui.set_time(convert_to_time(cur_time - self._start_time))
         clicked_set = self._brain.letters_colored_pressed()
         if clicked_set:
             self._gui.color_picked_letters(clicked_set)
@@ -86,6 +83,9 @@ class BoggleController:
         else:
             self._gui.reactivate_all_buttons()
 
+    def update_time(self):
+        cur_time = time.time()
+        self._gui.set_time(convert_to_time(cur_time - self._start_time))
 
 
     def run(self) -> None:
@@ -173,5 +173,6 @@ if __name__ == '__main__':
     # run_single_game()
     controller = BoggleController()
     controller.run()
+    print("hey")
 
 

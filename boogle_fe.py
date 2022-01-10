@@ -177,7 +177,7 @@ class Boogle_GUI:
     def set_time(self, time: str):
         # get the time, update my timer attribute
         # todo: change the way set score is
-        self._time = time
+        self._time.configure(text=time)
 
     def color_button_by_loc(self, button_loc, new_color):
         self._letters[button_loc].configure(bg=new_color)
