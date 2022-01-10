@@ -87,6 +87,9 @@ class BoggleController:
         cur_time = time.time()
         self._gui.set_time(convert_to_time(cur_time - self._start_time))
 
+    def new_game(self):
+        self._board = randomize_board()
+        self._brain = Boogle_brain(self._board, words_list)
 
     def run(self) -> None:
         self._gui.run()
@@ -113,6 +116,7 @@ class BoggleController:
         
     """
 
+
 def run_single_game():
     # get a board
     new_board = randomize_board()
@@ -134,7 +138,6 @@ def run_single_game():
             game_gui.set_score(brain.get_score())
             game_gui.set_time(convert_to_time(time_counter))
             game_gui.show_chosen_words(brain.get_words_detected_list())
-
 
             # location_pressed = game_gui.get_pressed_key() # get letter press
             # if location_pressed is not None:  # if a cube was chosen
