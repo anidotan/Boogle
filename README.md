@@ -11,11 +11,14 @@ Game_Path
 Words_collection
 
 
-tasks: 
-1. work on timer - either in the FE or in the BE 
-2. entranבק window
-3. fix buttons appearance 
-4. add time display 
-5. add messagebox 
-6. update chosen words - scrolling box ? 
-7. make exit screen
+tasks:
+work on timer - either in the FE or in the BE:
+update all of the time 
+exit messaage \ screen 
+make the screen not move 
+
+
+n2h:
+scrolling box in the chosen words
+exit screen
+quit game button 
