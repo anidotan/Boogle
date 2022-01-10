@@ -33,7 +33,7 @@ class Boogle_GUI:
         # welcome screen
         self._welcome_screen = tk.Frame(root, bg=BG_COLOR1, height=10, width=10)
         self._welcome_screen.grid(row=0, column=0, rowspan=3)
-        # self._welcome_screen.grid_rowconfigure(0, weight=2)
+        self._welcome_screen.grid_rowconfigure(0, weight=1)
         self._welcome_screen_obj.append(self._welcome_screen)
         self.build_entrance_screen(self._welcome_screen)
 
@@ -161,15 +161,14 @@ class Boogle_GUI:
             cur_button = self._letters[loc]
             self.deactivate_button(cur_button)
 
-    def color_and_disable_letters(self, letters_disabled: Set[Tuple[int, int]]):
+    def color_disabled_letters(self, letters_disabled: Set[Tuple[int, int]]):
         # color the letters on the board + make them unclickable
         for loc in letters_disabled:
             self.color_button_by_loc(loc, LETTER_DISABLED_COLOR)
             cur_button = self._letters[loc]
-            print(f'type: {type(cur_button)}, {cur_button}')
             self.deactivate_button(cur_button)
 
-    def reactivate_buttons(self):
+    def reactivate_all_buttons(self):
         for button in self._letters.values():
             if button['state'] != tk.NORMAL:
                 self.deactivate_button(button, deactivate=False)
@@ -177,10 +176,12 @@ class Boogle_GUI:
 
         # todo: maybe use this https://www.delftstack.com/howto/python-tkinter/how-to-change-tkinter-button-state/
 
-    def color_possible_letters(self, optional_letters: List[Tuple[int, int]]):
+    def color_optional_letters(self, optional_letters: List[Tuple[int, int]]):
         # color the letters on the board
         for loc in optional_letters:
             self.color_button_by_loc(loc, LETTER_OPTION_COLOR)
+            cur_button = self._letters[loc]
+            self.deactivate_button(cur_button, deactivate=False)
 
     def set_score(self, score: int):
         # self.__score = score
@@ -224,7 +225,7 @@ class Boogle_GUI:
         if self.__word_ended:
             word_ended_flag = self.__word_ended
             self.__word_ended = False
-            self.reactivate_buttons()
+            self.reactivate_all_buttons()
         return word_ended_flag
     # todo: move to the logic
 

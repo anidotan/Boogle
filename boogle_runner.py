@@ -30,9 +30,13 @@ class BoggleController:
             action = self.create_letter_action(letter_location)
             self._gui.set_letter_command(letter_location, action)
 
-        end_word_action = self.create_finished_word_action('end word')
-        self._gui.set_button_command('end word', end_word_action)
+        end_word_action = self.create_finished_word_action('end_word')
+        self._gui.set_button_command('end_word', end_word_action)
         self._gui.set_score(self._brain.get_score())
+
+        start_game_action = self.create_start_game_action('start_button')
+        self._gui.set_button_command('start_button', start_game_action)
+        self._gui.set_score(0)
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
         def fun() -> None:
@@ -47,25 +51,27 @@ class BoggleController:
     def create_finished_word_action(self, button_name: str) -> Callable[[], None]:
         def fun() -> None:
             self._brain.finished_word()
-            self._gui.reactivate_buttons()
+            self._gui.reactivate_all_buttons()
             print('word finished!')
             # todo: do we need to do anything else?
         return fun
 
     def create_start_game_action(self, button_name: str) -> Callable[[], None]:
         def fun() -> None:
-            self._brain.start_game()
-            self._gui.start_timer()
+            # self._brain.start_game()
+            # self._gui.start_timer()
+            self._gui.change_to_main_screen()
             print('game started in 3....2...1....go!')
         return fun
 
     def update_board(self):
+        self._gui.update_chosen_words(['ani'])
         self._gui.set_score(self._brain.get_score())
         set_of_disabled = self._brain.get_disabled_buttons()
         self._gui.color_picked_letters(self._brain.letters_colored_pressed())
         set_of_optional = self._brain.letter_optional_color()
-        self._gui.color_possible_letters(set_of_optional)
-        self._gui.deactivate_button(set_of_disabled - set_of_optional)
+        self._gui.color_optional_letters(set_of_optional)
+        self._gui.color_disabled_letters(set_of_disabled - set_of_optional)
 
 
     def run(self) -> None:
@@ -110,7 +116,7 @@ def run_single_game():
         if time_counter < GAME_TIME:
             # at the start of every round
             game_gui.color_picked_letters(brain.letters_colored_pressed())
-            game_gui.color_possible_letters(brain.letter_optional_color())
+            game_gui.color_optional_letters(brain.letter_optional_color())
             game_gui.set_score(brain.get_score())
             game_gui.set_time(convert_to_time(time_counter))
             game_gui.show_chosen_words(brain.get_words_detected_list())
@@ -144,6 +150,9 @@ def convert_to_time(seconds):
     seconds %= 60
 
     return "%02d:%02d" % (minutes, seconds)
+
+def run_game():
+    controller.run()
 
 
 if __name__ == '__main__':
