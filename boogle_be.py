@@ -59,15 +59,18 @@ class Boogle_brain:
         self._disabled_buttons.clear()
 
         if cur_word in self._all_words_list:
-            # add the score and board
-            self._words_found.append(cur_word)
-            self._score += num_cubes**2
-            self._message = "you're word was correct!\nyou gained " + str(num_cubes**2) + " points"
+            if cur_word not in self._words_found:
+                # add the score and board
+                self._words_found.append(cur_word)
+                self._score += num_cubes**2
+                self._message = "you're word was correct!\nyou gained " + str(num_cubes**2) + " points"
+            else:
+                self._message = "you already found this word,\ntry a different one"
             return True
         else:
             self._message = "sorry! that's not a word"
             return False
-        # todo - add somthing to ahppen when the word is wrong
+
 
     def letters_colored_pressed(self) -> list[tuple]:
         """
@@ -169,9 +172,3 @@ def all_locations_as_set(board):
 
     return final
 
-if __name__ == '__main__':
-
-    b1 = [['T', 'H', 'E', 'T'],
-          ['O', 'H', 'N', 'D'],
-          ['V', 'U', 'F', 'U'],
-          ['H', 'O', 'A', 'V']]
