@@ -33,7 +33,7 @@ class Boogle_GUI:
         # self.__word_ended = False
 
         # welcome screen
-        self._welcome_screen = tk.Frame(root, bg=BG_COLOR1)
+        self._welcome_screen = tk.Frame(root, bg=DEFAULT_BG_COLOR)
         self._welcome_screen.grid(row=0, column=0)
         self._welcome_screen_obj.append(self._welcome_screen)
         self.build_entrance_screen(self._welcome_screen)
@@ -43,15 +43,15 @@ class Boogle_GUI:
         # self._main_game_frame.grid(row=0, column=0)
 
         # build upper frame
-        self._upper_frame = tk.Frame(self._main_game_frame)
+        self._upper_frame = tk.Frame(self._main_game_frame, bg=DEFAULT_BG_COLOR)
         self._upper_frame.grid(row=0, rowspan=3, sticky=tk.N)
 
         # build middle frame
-        self._middle_frame = tk.Frame(self._main_game_frame)
+        self._middle_frame = tk.Frame(self._main_game_frame, bg=DEFAULT_BG_COLOR)
         self._middle_frame.grid(row=3, rowspan=7)
 
         # build bottom frame
-        self._bottom_frame = tk.Frame(self._main_game_frame)
+        self._bottom_frame = tk.Frame(self._main_game_frame, bg=DEFAULT_BG_COLOR)
         self._bottom_frame.grid(row=15, rowspan=3)
 
         self.build_top_grid(self._upper_frame)
@@ -88,13 +88,13 @@ class Boogle_GUI:
     def build_top_grid(self, parent):
         self._message_box = tk.Label(parent , bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                font=(FONT, 15, 'bold'))
-        self._message_box.grid(row=0, sticky=tk.N, pady=10)
+        self._message_box.grid(row=0, rowspan=2, sticky=tk.N, pady=10)
         self._time = tk.Label(parent, text=DEFAULT_TIME, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                          font=(FONT, 20))
-        self._time.grid(row=1, sticky=tk.S)
+        self._time.grid(row=2, sticky=tk.S)
 
     def build_letter_grid(self, parent):
-        self._letter_board_contrainer = tk.Frame(parent)
+        self._letter_board_contrainer = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
         self._letter_board_contrainer.grid(row=0, column=0, columnspan=4, rowspan=4, padx=50, sticky=tk.W)
         for row in range(4):
             for col in range(4):
@@ -119,12 +119,12 @@ class Boogle_GUI:
 
 
     def build_side_grid(self, parent):
-        self._side_frame = tk.Frame(parent)
+        self._side_frame = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
         self._side_frame.grid(row=0, column=6, rowspan=4, columnspan=2)
-        self._score = tk.Label(self._side_frame, text=f'Score:', fg=FONT_COLOR,
+        self._score = tk.Label(self._side_frame, text=f'Score:', fg=FONT_COLOR, bg=DEFAULT_BG_COLOR,
                                font=(FONT, 20, 'bold'))
         self._score.grid(row=0, column=0, rowspan=2)
-        self._chosen_words_title = tk.Label(self._side_frame, text='Chosen Words:', fg=FONT_COLOR, font=(FONT, 10, 'bold'))
+        self._chosen_words_title = tk.Label(self._side_frame, text='Chosen Words:', fg=FONT_COLOR, bg=DEFAULT_BG_COLOR, font=(FONT, 10, 'bold'))
         self._chosen_words_title.grid(row=2, column=0)
         self._chosen_words_box = tk.Label(self._side_frame, text='', bg=TEXTBOX_BG_COLOR, fg=FONT_COLOR, font=(FONT, 10, 'bold'), height=8, width=10)
         self._chosen_words_box.grid(row=3, column=0, rowspan=2, columnspan=3)
@@ -177,7 +177,7 @@ class Boogle_GUI:
     def set_time(self, time: str):
         # get the time, update my timer attribute
         # todo: change the way set score is
-        self._time = time
+        self._time.configure(text=time)
 
     def color_button_by_loc(self, button_loc, new_color):
         self._letters[button_loc].configure(bg=new_color)
@@ -225,7 +225,7 @@ class Boogle_GUI:
         return self._letters
 
     def get_letter_loc(self, button):
-        for loc,letter in self._letters:
+        for loc, letter in self._letters:
             if letter == button:
                 return loc
 
@@ -238,23 +238,3 @@ class Boogle_GUI:
 
     def run(self) -> None:
         self._main_window.mainloop()
-
-"""
-if __name__ == '__main__':
-    b1 = [['T', 'H', 'E', 'T'],
-          ['O', 'H', 'N', 'D'],
-          ['V', 'U', 'F', 'U'],
-          ['H', 'O', 'A', 'V']]
-    boggle = Boogle_GUI(b1)
-    letters = boggle.get_letters()
-    # boggle.color_picked_letters([(0,1), (0,0)])
-    # boggle.color_possible_letters(([(1,1), (3,0)]))
-    boggle.set_score(10)
-    boggle.run()
-
-    # boggle.set_display("TEST MODE")
-
-    #    use: focus
-
-    "zuk was here! i came to terrorize your code!"
-"""
