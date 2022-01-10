@@ -1,6 +1,3 @@
-from boogle_back_track import possible_moves
-from boogle import get_all_locations
-
 class Boogle_brain:
 
     def __init__(self, cur_board, words_list):
@@ -9,25 +6,21 @@ class Boogle_brain:
         self._pressed_tuples = set()
         self._possible_moves = set()
         self._disabled_buttons = set()
-        self.last_press = None
+        self._last_press = None
         self._all_words_list = words_list
         self._words_found = []
         self._score = 0
         self._message = None
 
-    def __str__(self):  # remove
-        total = ""
-        for row in self._board:
-            total = total + str(row) + "\n"
-        return total
-
     def letter_input(self, location: tuple[int, int]) -> bool:
         """
-        adds a letter
+        adds a letter, updates the current word that is built, and the list of
+        pressed buttons and the buttons that should be disabled
         :param location: location of pressed key as a tuple
         :return: True - if successful, False - if input is illegal
         """
         cur_row, cur_col = location
+        # if nothing is pressed yet
         if not self._pressed_tuples:
             self._pressed_tuples.add(location)
             self._last_press = location
@@ -47,7 +40,11 @@ class Boogle_brain:
 
     def finished_word(self) -> bool:
         """
-        check if the word is in the word list
+        activate a sequence of actions when player declair he finished a word:
+        - resets current word
+        - reset last key pressed
+        - reset the list of pressed buttons and buttons to disable
+        - updates the score and the relevant message that will be displayed later
         :return: True - if word is correct, False- the words is not in the dictionary
         """
         cur_word = self._cur_word
@@ -71,16 +68,15 @@ class Boogle_brain:
             self._message = "sorry! that's not a word"
             return False
 
-
-    def letters_colored_pressed(self) -> list[tuple]:
+    def letters_colored_pressed(self) -> set:
         """
-        :return: list of tuples of all the words that should be colored as pressed ones
+        :return: set of tuples of all the words that should be colored as pressed ones
         """
         return self._pressed_tuples
 
-    def letter_optional_color(self) -> list[tuple]:
+    def letter_optional_color(self) -> set[tuple]:
         """
-        :return: list of tuples of all the letters that are optional to choose from
+        :return: set of tuples of all the letters that are optional to choose from
         """
         final_set = set()
         if self._last_press is None:
@@ -94,6 +90,9 @@ class Boogle_brain:
             return final_set
 
     def get_disabled_buttons(self):
+        """
+        :return: a set of all the tuples that aren't the ones who have been pressed by now
+        """
         return self._disabled_buttons
 
     def get_words_detected_list(self) -> list:
@@ -103,9 +102,19 @@ class Boogle_brain:
         return self._words_found
 
     def get_score(self):
+        """
+        :return: the current score in the game
+        """
         return self._score
 
     def get_message(self):
+        """
+        :return: the message, could be:
+        - success in finding a word
+        - remark that the word has been found already
+        - remark that the guessed word is wrong
+        - default - wish the player "have fun!"
+        """
         temp = self._message
         self._message = None
         if not temp:
@@ -163,6 +172,10 @@ def list_change_coor(coor):
 
 
 def all_locations_as_set(board):
+    """
+    :param board:
+    :return: al the possible indexes of a given board as a set of tuples
+    """
     final = set()
     rows = len(board)
     cols = len(board[0])

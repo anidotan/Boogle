@@ -1,6 +1,7 @@
-import boogle
-from typing import List, Tuple, Dict
-import itertools
+from boogle import list_from_file  # remove
+import time # remove
+
+NEIGHBORS = [(0, 1), (0, -1), (1, 0), (-1, 0), (-1, 1), (-1, -1), (1, 1), (1, -1)]
 
 
 def is_valid_path(board, path, words):
@@ -17,22 +18,7 @@ def is_valid_path(board, path, words):
         the_word = word_from_path(path, board)
         if the_word in words:
             return the_word
-
-
-def word_from_path(path, board) -> str:  # todo - make sure you check the path is leggal before use
-    """
-    returns the string representing a word build from a given path
-    :param path: list of tuples
-    :param board: list of lists
-    :return: string - the word
-    """
-    full_word = ""
-    for cell_tuple in path:
-        cur_row, cur_col = cell_tuple
-        current_char = board[cur_row][cur_col]
-        full_word += current_char
-
-    return full_word
+    return None
 
 
 def path_is_legal(path, board) -> bool:
@@ -64,84 +50,6 @@ def path_is_legal(path, board) -> bool:
     return True
 
 
-def find_length_n_paths(n, board, words):
-    """
-    1. normalize everything so i can use it
-    2. build tuple locations in board
-    3. create all combinations in the length of n
-    4. filter out the combinations that aren't valid routes
-    5. filter out all of the combinations that aren't in the words list
-    6. return final list
-    :param n:
-    :param board:
-    :param words: words dict
-    :return:
-    """
-    # get list of all the tuples in the board
-    all_board_locations = boogle.get_all_locations(board)
-    # all possible paths in the length of n
-    # todo - build something better - maybe recursion
-    paths_combinations = list(itertools.combinations(all_board_locations, n))
-    valid_paths = []
-    for path in paths_combinations:
-        if path_is_legal(path, board) and word_from_path(path, board) in words:
-            valid_paths.append(path)
-
-    return valid_paths
-
-
-def find_length_n_words(n, board, words):
-    """
-    all the valid paths that create words in the length of n and are in the
-    words list
-    :param n: the desired word length
-    :param board: the current board
-    :param words: list of all words
-    :return: list of all the valid paths
-    """
-    # get list of all the tuples in the board
-    list_all_board_locations = boogle.get_all_locations(board)
-    # counts how many cubes there are with two letters
-    num_double_cubes = count_doubles_in_board(board)
-    valid_paths = []
-
-    # we want the path length to be corresponding with the number of doubled cubes
-    for num_comb in range(n - num_double_cubes, n + 1):
-        paths_combinations = list(itertools.combinations(list_all_board_locations, num_comb))
-
-        for cur_path in paths_combinations:
-            if path_is_legal(cur_path, board):
-                cur_word = word_from_path(cur_path, board)
-                if len(cur_word) == n and cur_word in words:
-                    valid_paths.append(list(cur_path))
-
-    return valid_paths
-
-
-def count_doubles_in_board(board):
-    """
-    counts the number of double letter cubes in a given board
-    :param board: the board
-    :return: if all are single letters - 0
-    """
-    all_letters_str = ""
-    num_cells = 0
-
-    for cur_row in board:
-
-        for cur_cell in cur_row:
-            num_cells += 1
-            all_letters_str += cur_cell
-
-    num_letters = len(all_letters_str)
-    return num_letters - num_cells
-
-
-def max_score_paths(board, words):
-
-    pass
-
-
 def are_there_duplicates(given_list) -> bool:
     """
     checks if there are values that appear twice in a given list
@@ -159,9 +67,262 @@ def are_there_duplicates(given_list) -> bool:
     return there_are_double
 
 
-# words_dict  - dict{key = length of word,value = list of dicts {eache first letter: all the words in the length}}
+def word_from_path(path, board) -> str:
+    """
+    returns the string representing a word build from a given path
+    :param path: list of tuples - make sure the path is legal
+    :param board: list of lists
+    :return: string - the word
+    """
+    full_word = ""
+    for cell_tuple in path:
+        cur_row, cur_col = cell_tuple
+        current_char = board[cur_row][cur_col]
+        full_word += current_char
 
-# [['T', 'H', 'E', 'T'],
-#  ['O', 'H', 'N', 'D'],
-#  ['V', 'U', 'F', 'U'],
-#  ['H', 'O', 'A', 'V']
+    return full_word
+
+
+def find_length_n_paths(n, board, words):
+    """
+    finds all the paths in length n that give out ords that are in the words list
+    :param n: desired length of the path
+    :param board: given board
+    :param words: iterable of words
+    :return: list of paths that are in length n
+    """
+    final_list = []
+    all_loc = list_all_locations(board)
+
+    num_cells = len(board) * len(board[0])
+    if n > num_cells or n == 0:
+        return final_list
+
+    for start_locatin in all_loc:
+        temp_list = [start_locatin]
+        helper_length_n(final_list, temp_list, n, board, start_locatin,words, True)
+    return final_list
+
+
+def list_all_locations(board):
+    """
+    creates a list of tuples of all the locations in the board (row,col)
+    :param board: given board
+    :return: the list
+    """
+    rows = len(board)
+    cols = len(board[0])
+    return [(x, y) for x in range(cols) for y in range(rows)]
+
+
+def location_in_limits(row, col, board) -> bool:
+    """
+    checks if a given row and col will give a cell that is in the limits of
+    a given board
+    :param row: given row
+    :param col: given col
+    :param board: the board
+    :return: True - if the cell will be inside the board
+             False - if the cell will be outside
+
+    """
+    num_rows = len(board)
+    num_cols = len(board[0])
+    if row < 0 or col < 0 or row > num_rows - 1 or col > num_cols - 1:
+        return False
+    else:
+        return True
+
+
+def add_location_tuples(tup1, tup2):
+    """
+    :param tup1: tuple of (row,col)
+    :param tup2: tuple of (row,col)
+    :return: the new row and col
+    """
+    cur_row, cur_col = tup1
+    row_jump, col_jump = tup2
+    new_row = cur_row + row_jump
+    new_col = cur_col + col_jump
+    return new_row, new_col
+
+
+def find_length_n_words(n, board, words):
+    """
+    finds all the paths that give a legal word in length n
+    :param n: desired length of the word
+    :param board: given board
+    :param words: iterable of words
+    :return: list of paths that give out words that will be in the length of n
+    """
+    final_list = []
+    all_loc = list_all_locations(board)
+
+    num_cells = len(board) * len(board[0])
+    if n > num_cells or n == 0:
+        return final_list
+
+    for start_locatin in all_loc:
+        temp_list = [start_locatin]
+        helper_length_n(final_list, temp_list, n, board, start_locatin,words, False)
+
+    return final_list
+
+
+def helper_length_n(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool):
+    """
+    helps to get disired path that gives out a legal path or word
+    in the length of n. works in recorsion
+    :param all_paths: ,aster list of paths that will recive into it all the relevant paths
+    :param cur_path: a current path that is built
+    :param req_len: the desired len of the word
+    :param board: given board
+    :param last_cell: the last cell the has been added - default is the first cell
+    :param all_words: iterable of all the words
+    :param stop_parameter: True - according to path size, False - according to word size
+    :return: nothing to return
+    """
+
+    relevant_len = get_length(cur_path, board, stop_parameter)
+
+    if relevant_len == req_len:
+        cur_word = word_from_path(cur_path, board)
+        if cur_word in all_words:
+            all_paths.append(cur_path[::])
+            return
+    elif relevant_len > req_len:
+        return
+
+    else:
+        for neighbor in NEIGHBORS:
+            new_row, new_col = add_location_tuples(last_cell, neighbor)
+            location_tuple = tuple((new_row, new_col))
+            if location_in_limits(new_row, new_col, board) and location_tuple not in cur_path:
+                cur_path.append(location_tuple)
+                helper_length_n(all_paths, cur_path, req_len, board, location_tuple, all_words,stop_parameter)
+                cur_path.pop()
+        return
+
+
+def get_length(cur_path, board, stop_parameter: bool):
+    """
+    :param cur_path:
+    :param board:
+    :param stop_parameter: True - according to path size, False - according to word size
+    :return: the relevant length
+    """
+    if stop_parameter:
+        return len(cur_path)
+    else:
+        return len(word_from_path(cur_path, board))
+
+
+
+def max_score_paths(board, words):
+    start = time.time() # remove
+    print("start", start)
+    number_all_cells = len(board) * len(board[0])
+    dict_of_paths_by_len = creat_generic_dict(number_all_cells)
+    list_paths = []
+    all_loc = list_all_locations(board)
+    for start_locatin in all_loc:
+        print("middle", time.time()) #remove
+        temp_list = [start_locatin]
+        helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len)
+        list_paths.clear()
+
+    print(dict_of_paths_by_len) # remove
+    list_to_return = extract_greatest_from_dict(dict_of_paths_by_len)
+    end = time.time()
+    print("end", end)
+    print("total", end - start)
+    return list_to_return
+
+
+def creat_generic_dict(num_index) -> dict:
+    """
+    create a generic dict of lists
+    :param num_index: the greatest required key
+    :return: dict of empty lists that the keys are from 3 to num_index
+    """
+    the_dict = {}
+    for i in range(3, num_index + 1):
+        the_dict[i] = []
+    return the_dict
+
+
+def extract_greatest_from_dict(dict_paths):
+    list_to_return = []
+    for i in range(16, 2, -1):
+        cur_list = dict_paths[i]
+        if cur_list:
+            list_to_return = list_no_double_words(cur_list)  # todo - make sure no double words
+            return list_to_return
+
+
+# def list_no_double_words(list_of_paths):
+#     as_set = set(list_of_paths)
+#     as_list = list(as_set)
+#     return as_list
+
+
+def list_no_double_words(list_of_paths, board):
+    list_of_words = []
+    final_list_paths = []
+    for cur_path in list_of_paths:
+        cur_word = word_from_path(cur_path, board)
+        if cur_word not in list_of_words:
+            list_of_words.append(cur_word)
+            final_list_paths.append(cur_path)
+    return final_list_paths
+
+
+def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, dict_to_add):
+    relevant_len = get_length(cur_path, board, stop_parameter)
+    print("cur len", len(cur_path))  # remove
+    print("bool",word_from_path(cur_path, board) in all_words)
+    print(dict_to_add)
+    if 2 < relevant_len and relevant_len <= req_len and word_from_path(cur_path, board) in all_words:
+        add_path_to_dict(cur_path, dict_to_add)
+
+    if relevant_len == req_len:
+        cur_word = word_from_path(cur_path, board)
+        if cur_word in all_words:
+            all_paths.append(cur_path[::])
+            return
+    elif relevant_len > req_len:
+        return
+
+    else:
+        for neighbor in NEIGHBORS:
+            new_row, new_col = add_location_tuples(last_cell, neighbor)
+            location_tuple = tuple((new_row, new_col))
+            if location_in_limits(new_row, new_col, board) and location_tuple not in cur_path:
+                cur_path.append(location_tuple)
+                helper_paths_with_dict(all_paths, cur_path, req_len, board, location_tuple, all_words, stop_parameter, dict_to_add)
+                cur_path.pop()
+        return
+
+
+def add_path_to_dict(cur_path, dict_paths) -> None:
+    """
+    add a copy of a given path to a dict that is sorted according to the path length
+    :param cur_path:
+    :param dict_paths:
+    :return: doesn't return anything
+    """
+    len_path = len(cur_path)
+    cur_list_in_dict = dict_paths[len_path]
+    cur_list_in_dict.append(cur_path[::])
+
+
+if __name__ == '__main__':
+    words_list = list_from_file("boggle_dict.txt")
+    b1 = [['T', 'H', 'E', 'T'],
+         ['O', 'H', 'N', 'D'],
+         ['V', 'U', 'F', 'U'],
+         ['H', 'O', 'A', 'V']]
+
+
+
+    print(max_score_paths(b1,words_list))
