@@ -23,20 +23,34 @@ class Boogle_GUI:
         # general attributes
         self._letters = {}
         self._buttons = {}
+        self._welcome_screen_obj = []
 
         self.__current_key = None
         self.__word_ended = False
+        # self._current_frame = 'ENTRANCE'
+        # entrance screen
 
+        # welcome screen
+        self._welcome_screen = tk.Frame(root, bg=BG_COLOR1, height=10, width=10)
+        self._welcome_screen.grid(row=0, column=0, rowspan=3)
+        # self._welcome_screen.grid_rowconfigure(0, weight=2)
+        self._welcome_screen_obj.append(self._welcome_screen)
+        self.build_entrance_screen(self._welcome_screen)
+
+
+        # main game screen
+        self._main_game_frame = tk.Frame(root, bg=DEFAULT_BG_COLOR)
+        # self._main_game_frame.grid(row=0, column=0)
         # build upper frame
-        self._upper_frame = tk.Frame(root, bg=BG_COLOR1)
+        self._upper_frame = tk.Frame(self._main_game_frame)
         self._upper_frame.grid(row=0, rowspan=3)
 
         # build middle frame
-        self._middle_frame = tk.Frame(root, bg=BG_COLOR2)
+        self._middle_frame = tk.Frame(self._main_game_frame)
         self._middle_frame.grid(row=3, rowspan=4)
 
         # build bottom frame
-        self._bottom_frame = tk.Frame(root, bg=BG_COLOR2)
+        self._bottom_frame = tk.Frame(self._main_game_frame)
         self._bottom_frame.grid(row=7, rowspan=3)
 
         self.build_top_grid(self._upper_frame)
@@ -44,20 +58,36 @@ class Boogle_GUI:
         self.build_side_grid(self._middle_frame)
         self.build_bottom_grid(self._bottom_frame)
 
+
+        # switch to the next screen
+        # self.change_to_main_screen()
+
     ######## BUILDERS ########
     # todo: do i want to use the self or now? - ASK TOMER
 
+    def change_to_main_screen(self):
+        # change the entrance screen to main game screen by removing and adding the objects to the grid
+        for obj in self._welcome_screen_obj:
+            obj.grid_remove()
+        self._main_game_frame.grid(row=0, column=0)
+
     def build_entrance_screen(self, parent):
-        self._boogle_title = tk.Label
-        title = tk.Label(parent, text='Welcome to Boogle!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+        # self._boogle_title = tk.Label
+        self._boogle_title = tk.Label(parent, text='Welcome to Boogle!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                          font=(FONT, 30, 'bold'))
-        title.grid(row=0, col=0, sticky=tk.NSEW)
-        secondary_title = tk.Label(parent, text='ARE YOU READY?!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+        self._boogle_title.grid(row=0, column=0, sticky=tk.NSEW)
+
+        self._secondary_title = tk.Label(parent, text='ARE YOU READY?!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                    font=(FONT, 15, 'bold'))
-        secondary_title.grid(row=1)
+        self._secondary_title.grid(row=1)
         self._start_button = tk.Button(parent, text='START', bg=PRIMARY_BUTTON_COLOR, fg='black', width=6, height=1,
                                  activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 7))
-    def build_game_screen(self):
+        self._start_button.grid(row=2)
+        self._buttons['start_button'] = self._start_button
+
+        # self._welcome_screen_obj.append(self._boogle_title)
+        # self._welcome_screen_obj.append(self._secondary_title)
+        # self._welcome_screen_obj.append(self._start_button)
 
     def build_top_grid(self, parent):
         title = tk.Label(parent, text='Welcome to Boogle!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
@@ -66,9 +96,9 @@ class Boogle_GUI:
         secondary_title = tk.Label(parent, text='ARE YOU READY?!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                    font=(FONT, 15, 'bold'))
         secondary_title.grid(row=1)
-        self._start_button = tk.Button(parent, text='START', bg=PRIMARY_BUTTON_COLOR, fg='black', width=6, height=1,
-                                 activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 7))
-        self._start_button.grid(row=2)
+        # self._start_button = tk.Button(parent, text='START', bg=PRIMARY_BUTTON_COLOR, fg='black', width=6, height=1,
+        #                          activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 7))
+        # self._start_button.grid(row=2)
         self._buttons['start_button'] = self._start_button
         self._time = tk.Label(parent, text=DEFAULT_TIME, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                          font=(FONT, 30, 'bold'))
@@ -100,7 +130,7 @@ class Boogle_GUI:
         self._message_box = tk.Label(parent, text=f'Message:', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                font=(FONT, 15, 'bold'))
         self._message_box.grid(row=7)
-        self._buttons['end word'] = self._end_word
+        self._buttons['end_word'] = self._end_word
 
     def build_side_grid(self, parent):
         self._side_frame = tk.Frame(parent, bg='blue')
