@@ -1,5 +1,5 @@
 import tkinter as tk
-DEFAULT_BG_COLOR = 'White'
+DEFAULT_BG_COLOR = 'alice blue'
 TEXTBOX_BG_COLOR = 'mint cream'
 BG_COLOR1 = 'mint cream'
 BG_COLOR2 = 'alice blue'
