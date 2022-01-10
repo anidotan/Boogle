@@ -37,6 +37,7 @@ class BoggleController:
         start_game_action = self.create_start_game_action('start_button')
         self._gui.set_button_command('start_button', start_game_action)
         self._gui.set_score(0)
+        self._start_time = None
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
         def fun() -> None:
@@ -52,7 +53,8 @@ class BoggleController:
     def create_finished_word_action(self, button_name: str) -> Callable[[], None]:
         def fun() -> None:
             self._brain.finished_word()
-            self._gui.reactivate_all_buttons()
+            self.update_board()
+
             print('word finished!')
             # todo: do we need to do anything else?
         return fun
@@ -61,23 +63,29 @@ class BoggleController:
         def fun() -> None:
             # self._brain.start_game()
             # self._gui.start_timer()
+            self._start_time = time.time()
             self._gui.change_to_main_screen()
             print('game started in 3....2...1....go!')
         return fun
 
+
     def update_board(self):
-        self._gui.update_chosen_words(['ani'])
+        self._gui.update_chosen_words(self._brain.get_words_detected_list())
         self._gui.set_score(self._brain.get_score())
-        set_of_disabled = self._brain.get_disabled_buttons()
-        self._gui.color_picked_letters(self._brain.letters_colored_pressed())
-        set_of_optional = self._brain.letter_optional_color()
-        self._gui.color_possible_letters(set_of_optional)
-        relevant_to_disable = set_of_disabled - set_of_optional
-        self._gui.color_and_disable_letters(relevant_to_disable)
-        print("disable", relevant_to_disable)
-        print("optional", set_of_optional)
-        print("pressed", self._brain.letters_colored_pressed())
-        print("len total should be 16", len(relevant_to_disable)+ len(set_of_optional)+len(self._brain.letters_colored_pressed()))
+        self._gui.update_message_box(self._brain.get_message())
+        cur_time = time.time()
+        self._gui.set_time(convert_to_time(cur_time - self._start_time))
+        clicked_set = self._brain.letters_colored_pressed()
+        if clicked_set:
+            self._gui.color_picked_letters(clicked_set)
+            set_of_disabled = self._brain.get_disabled_buttons()
+            set_of_optional = self._brain.letter_optional_color()
+            self._gui.color_optional_letters(set_of_optional)
+            relevant_to_disable = set_of_disabled - set_of_optional
+            self._gui.color_disabled_letters(relevant_to_disable)
+        else:
+            self._gui.reactivate_all_buttons()
+
 
 
     def run(self) -> None:

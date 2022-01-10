@@ -155,22 +155,20 @@ class Boogle_GUI:
             cur_button = self._letters[loc]
             self.deactivate_button(cur_button)
 
+    def reactivate_all_buttons(self):
+        for button in self._letters.values():
+            if button['state'] != tk.NORMAL:
+                self.deactivate_button(button, deactivate=False)
+            self.color_button(button, LETTER_COLOR)
+
+        # todo: maybe use this https://www.delftstack.com/howto/python-tkinter/how-to-change-tkinter-button-state/
+
     def color_optional_letters(self, optional_letters: List[Tuple[int, int]]):
         # color the letters on the board
         for loc in optional_letters:
             self.color_button_by_loc(loc, LETTER_OPTION_COLOR)
             cur_button = self._letters[loc]
             self.deactivate_button(cur_button, deactivate=False)
-
-    def reactivate_all_buttons(self):
-        print(len(self._letters))
-        for letter_loc, letter_button in self._letters.items():
-            self.color_button_by_loc(letter_loc, LETTER_COLOR)
-            if letter_button['state'] != tk.NORMAL:
-                self.deactivate_button(letter_button, deactivate=False)
-
-        # todo: maybe use this https://www.delftstack.com/howto/python-tkinter/how-to-change-tkinter-button-state/
-
 
     def set_score(self, score: int):
         # self.__score = score
@@ -201,7 +199,7 @@ class Boogle_GUI:
 
     def update_message_box(self, message: str):
         # update the message box (error, congrats, etc)
-        self._message_box.configure(text=f'Message: {message}')
+        self._message_box.configure(text=message)
 
     def set_current_key(self, key):
         self.__current_key = key

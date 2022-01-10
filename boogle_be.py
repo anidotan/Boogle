@@ -13,6 +13,7 @@ class Boogle_brain:
         self._all_words_list = words_list
         self._words_found = []
         self._score = 0
+        self._message = None
 
     def __str__(self):  # remove
         total = ""
@@ -57,13 +58,14 @@ class Boogle_brain:
         self._pressed_tuples.clear()
         self._disabled_buttons.clear()
 
-
         if cur_word in self._all_words_list:
             # add the score and board
             self._words_found.append(cur_word)
             self._score += num_cubes**2
+            self._message = "you're word was correct!\nyou gained " + str(num_cubes**2) + " points"
             return True
         else:
+            self._message = "sorry! that's not a word"
             return False
         # todo - add somthing to ahppen when the word is wrong
 
@@ -100,6 +102,15 @@ class Boogle_brain:
     def get_score(self):
         return self._score
 
+    def get_message(self):
+        temp = self._message
+        self._message = None
+        if not temp:
+            temp = "Have fun!"
+
+        print(temp)
+        return temp
+
 
 def check_press_ok(last_press, cur_press):
     cur_row, cur_col = cur_press
@@ -112,7 +123,6 @@ def check_press_ok(last_press, cur_press):
 
 def surrounding_tuples(board, cur_tuple) -> list:
     """
-
     :return: a list of all the tuples surrounding a given tuple
     """
     final_list = []
@@ -165,20 +175,3 @@ if __name__ == '__main__':
           ['O', 'H', 'N', 'D'],
           ['V', 'U', 'F', 'U'],
           ['H', 'O', 'A', 'V']]
-
-    print(all_locations_as_set(b1))
-    # list = ["THE"]
-    # brain = Boogle_brain(b1, list)
-    # for i in range(3):
-    #     print(brain.get_words_detected_list())
-    #     print(brain.letters_colored_pressed())
-    #     x = input("type x")
-    #     y= input("y")
-    #     z = tuple((int(x),int(y)))
-    #     print(z)
-    #     brain.letter_input(z)
-    #     # brain.letter_input((0, 1))
-    #     # brain.letter_input((0,2))
-    # brain.finished_word()
-    # print(brain.get_words_detected_list())
-    # print(brain.letters_colored_pressed())
