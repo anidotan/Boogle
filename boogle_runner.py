@@ -13,9 +13,6 @@ words_list = list_from_file("boggle_dict.txt")
 
 # every button has a func from the logic - needs a gui and a
 
-# todo: letter input connect with each letter
-# todo: connect finished word with tthe word ended
-
 
 class BoggleController:
     def __init__(self):

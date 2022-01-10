@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import font
-from typing import Optional, Tuple, List, Callable, Set
+from typing import Optional, Tuple, List, Callable, Set, Dict
 from boogle_theme import *
 
-DEFAULT_TIME = '00:00'
+DEFAULT_TIME = '03:00'
 
 
 class Boogle_GUI:
@@ -21,9 +21,9 @@ class Boogle_GUI:
         self._root.grid_rowconfigure(0, weight=1)
 
         # general attributes
+        self._letters: Dict[Tuple[int, int]: tk.Button] = {}
         self._time_left = 180
-        self._letters = {}
-        self._buttons = {}
+        self._buttons: Dict[str: tk.Button] = {}
         self._screens = {}
         self._current_screen = None
 
@@ -62,27 +62,6 @@ class Boogle_GUI:
         self.build_bottom_grid(self._bottom_frame)
 
     ######## BUILDERS ########
-    """
-    def change_to_main_screen(self):
-        # change the entrance screen to main game screen by removing and adding the objects to the grid
-        for obj in self._welcome_screen_obj:
-            obj.grid_remove()
-        self._main_game_screen.grid(row=0, column=0, rowspan=10, columnspan=10)
-    
-    """
-
-    def change_screen(self, new_screen_name: str):
-        self._current_screen.grid_remove()
-        new_screen = self._screens[new_screen_name]
-        self._current_screen = new_screen
-        new_screen.grid(row=0, column=0, rowspan=10, columnspan=10)
-        if new_screen_name == 'main_game':
-            self.advance_timer()
-            print('started timer after changing to main screen')
-        elif new_screen_name == 'game_over':
-            self.reset_timer()
-
-
     def build_entrance_screen(self, parent):
         self._boogle_title = tk.Label(parent, text='Welcome to Boogle!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                       font=(FONT, 30, 'bold'))
@@ -95,19 +74,16 @@ class Boogle_GUI:
         self._start_button.grid(row=3, column=2, sticky=tk.S, pady=20)
         self._buttons['start_button'] = self._start_button
 
-        # self._welcome_screen_obj.append(self._boogle_title)
-        # self._welcome_screen_obj.append(self._secondary_title)
-        # self._welcome_screen_obj.append(self._start_button)
-
     def build_game_over_screen(self, parent):
         self._screen_title = tk.Label(parent, text='Game Ended', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                       font=(FONT, 30, 'bold'))
         self._screen_title.grid(row=0, column=0, columnspan=5, pady=10, sticky=tk.NSEW)
         self._subtitle = tk.Label(parent, text='Good Job!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
-                                         font=(FONT, 15))
+                                  font=(FONT, 15))
         self._subtitle.grid(row=2, column=0, columnspan=5, pady=30, sticky=tk.NSEW)
-        self._play_again_button = tk.Button(parent, text='Play Again', bg=PRIMARY_BUTTON_COLOR, fg='black', width=9, height=2,
-                                       activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 10, 'bold'))
+        self._play_again_button = tk.Button(parent, text='Play Again', bg=PRIMARY_BUTTON_COLOR, fg='black', width=9,
+                                            height=2,
+                                            activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 10, 'bold'))
         # self._play_again_button.grid(row=3, column=2, sticky=tk.S, pady=20)
         self._buttons['play_again'] = self._play_again_button
 
@@ -115,36 +91,6 @@ class Boogle_GUI:
         self._message_box = tk.Label(parent, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                      font=(FONT, 15, 'bold'))
         self._message_box.grid(row=0, rowspan=2, column=0, columnspan=10, sticky=tk.N, pady=5)
-
-    def reset_timer(self, default_game_length:int=180):
-        self._time_left = default_game_length
-        time_left_str = self.sec_to_time_str(default_game_length)
-        self.set_time(time_left_str)
-
-    def advance_timer(self):
-        print('started timer')
-        self._time_left -= 1
-        if self._time_left <= 0:
-            self.change_screen('game_over')
-        else:
-            time_left_str = self.sec_to_time_str(self._time_left)
-            self.set_time(time_left_str)
-            self._root.after(1000, self.advance_timer)
-
-
-    def sec_to_time_str(self, seconds: int):
-        """
-        :param seconds: number of seconds as float
-        :return: the time in minutes and seconds as str MM:SS
-        """
-        seconds = seconds % (24 * 3600)
-
-        seconds %= 3600
-        minutes = seconds // 60
-        seconds %= 60
-
-        return "%02d:%02d" % (minutes, seconds)
-
 
     def build_letter_grid(self, parent):
         self._letter_board_contrainer = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
@@ -168,15 +114,15 @@ class Boogle_GUI:
         self._time = tk.Label(parent, text=DEFAULT_TIME, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                               font=(FONT, 20))
         self._time.grid(row=0, column=5, columnspan=2, rowspan=2, pady=30)
-        self._end_game_button = tk.Button(parent, text='End Game', bg=PRIMARY_BUTTON_COLOR, fg='black', width=8, height=1,
-                                       activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 8))
+        self._end_game_button = tk.Button(parent, text='End Game', bg=PRIMARY_BUTTON_COLOR, fg='black', width=8,
+                                          height=1,
+                                          activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 8))
         self._end_game_button.grid(row=2, column=5, sticky=tk.S)
         self._buttons['game_over'] = self._end_game_button
         self._footer = tk.Label(parent, text=f'Built by the awesome Zuk Arbell and Ani Dotan', bg=DEFAULT_BG_COLOR,
                                 fg=FONT_COLOR,
                                 font=(FONT, 8))
         self._footer.grid(row=3, column=5, sticky=tk.S)
-
 
     def build_side_grid(self, parent):
         self._side_frame = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
@@ -196,7 +142,7 @@ class Boogle_GUI:
         self._end_word.grid(row=6, pady=10)
         self._buttons['end_word'] = self._end_word
 
-    ######## SETTERS / PROP UPDATES ########
+    ######## SETTERS ########
     def set_button_command(self, button_name: str, cmd: Callable[[], None]) -> None:
         self._buttons[button_name].configure(command=cmd)
 
@@ -217,14 +163,6 @@ class Boogle_GUI:
             cur_button = self._letters[loc]
             self.deactivate_button(cur_button)
 
-    def reactivate_all_buttons(self):
-        for button in self._letters.values():
-            if button['state'] != tk.NORMAL:
-                self.deactivate_button(button, deactivate=False)
-            self.color_button(button, LETTER_COLOR)
-
-        # todo: maybe use this https://www.delftstack.com/howto/python-tkinter/how-to-change-tkinter-button-state/
-
     def color_optional_letters(self, optional_letters: List[Tuple[int, int]]):
         # color the letters on the board
         for loc in optional_letters:
@@ -233,12 +171,10 @@ class Boogle_GUI:
             self.deactivate_button(cur_button, deactivate=False)
 
     def set_score(self, score: int):
-        # self.__score = score
         self._score.configure(text=f'Score: {score}')
 
     def set_time(self, time: str):
         # get the time, update my timer attribute
-        # todo: change the way set score is
         self._time.configure(text=time)
 
     def color_button_by_loc(self, button_loc, new_color):
@@ -247,46 +183,16 @@ class Boogle_GUI:
     def color_button(self, button, new_color):
         button.configure(bg=new_color)
 
-    def set_word_ended(self):
-        # todo: doesn't change the word on the screen
-        # todo: only run when key is pressed. add an event of clicked on button - end
-        self.__word_ended = True
-
-    # todo: REMOVE?
-
     def update_chosen_words(self, words: List[str]):
         # show the chosen words
         words_str = '\n'.join(words)
         self._chosen_words_box.configure(text=words_str)
 
-    #     todo: update the panel
-
     def update_message_box(self, message: str):
         # update the message box (error, congrats, etc)
         self._message_box.configure(text=message)
 
-    def set_current_key(self, key):
-        self.__current_key = key
-        # print(f'key clicked: {type(self.__current_key)}')
-
-    #     todo: remove this and move it to the logic
-
     ######## GETTERS #######
-    def get_word_ended(self):
-        word_ended_flag = False
-        if self.__word_ended:
-            word_ended_flag = self.__word_ended
-            self.__word_ended = False
-            self.reactivate_all_buttons()
-        return word_ended_flag
-
-    # todo: move to the logic
-
-    def get_pressed_key(self) -> Optional[Tuple[int, int]]:
-        cur_key = self.__current_key
-        self.__current_key = None
-        return cur_key
-
     def get_letters(self):
         return self._letters
 
@@ -296,7 +202,8 @@ class Boogle_GUI:
                 return loc
 
     ######## EVENTS ########
-    def deactivate_button(self, button: tk.Button, deactivate=True):
+    @staticmethod
+    def deactivate_button(button: tk.Button, deactivate=True):
         if deactivate:
             button['state'] = tk.DISABLED
         else:
@@ -304,3 +211,46 @@ class Boogle_GUI:
 
     def run(self) -> None:
         self._main_window.mainloop()
+
+    def reset_timer(self, default_game_length: int = 180):
+        self._time_left = default_game_length
+        time_left_str = self.sec_to_time_str(default_game_length)
+        self.set_time(time_left_str)
+
+    def advance_timer(self):
+        self._time_left -= 1
+        if self._time_left <= 0:
+            self.change_screen('game_over')
+        else:
+            time_left_str = self.sec_to_time_str(self._time_left)
+            self.set_time(time_left_str)
+            self._root.after(1000, self.advance_timer)
+
+    def sec_to_time_str(self, seconds: int):
+        """
+        :param seconds: number of seconds as float
+        :return: the time in minutes and seconds as str MM:SS
+        """
+        seconds = seconds % (24 * 3600)
+
+        seconds %= 3600
+        minutes = seconds // 60
+        seconds %= 60
+
+        return "%02d:%02d" % (minutes, seconds)
+
+    def change_screen(self, new_screen_name: str):
+        self._current_screen.grid_remove()
+        new_screen = self._screens[new_screen_name]
+        self._current_screen = new_screen
+        new_screen.grid(row=0, column=0, rowspan=10, columnspan=10)
+        if new_screen_name == 'main_game':
+            self.advance_timer()
+        elif new_screen_name == 'game_over':
+            self.reset_timer()
+
+    def reactivate_all_buttons(self):
+        for button in self._letters.values():
+            if button['state'] != tk.NORMAL:
+                self.deactivate_button(button, deactivate=False)
+            self.color_button(button, LETTER_COLOR)
