@@ -63,9 +63,11 @@ class Boogle_brain:
                 # add the score and board
                 self._words_found.append(cur_word)
                 self._score += num_cubes**2
-                self._message = "you're word was correct!\nyou gained " + str(num_cubes**2) + " points"
+                # self._message = "you're word was correct!\nyou gained " + str(num_cubes**2) + " points"
+                self._message = "your word was correct!"
             else:
-                self._message = "you already found this word,\ntry a different one"
+                # self._message = "you already found this word,\ntry a different one"
+                self._message = "you already found this word, please try a different one"
             return True
         else:
             self._message = "sorry! that's not a word"

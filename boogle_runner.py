@@ -36,37 +36,54 @@ class BoggleController:
 
         start_game_action = self.create_start_game_action('start_button')
         self._gui.set_button_command('start_button', start_game_action)
+        self._gui.update_message_box(self._brain.get_message())
         self._gui.set_score(0)
         self._start_time = None
+
+        game_over_action = self.create_game_over_action('game_over')
+        self._gui.set_button_command('game_over', game_over_action)
+
+        # start_game_action = self.create_start_game_action('play_again')
+        # self._gui.set_button_command('play_again', start_game_action)
+        # self._gui.set_score(0)
+        # self._gui.update_message_box(self._brain.get_message())
+        # self._start_time = None
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
         def fun() -> None:
             # self._brain.letter_input(button_loc)
-            # todo: do we need to do the default score?
-            print(f'button in location: {button_loc}')
             self._brain.letter_input(button_loc)
             self.update_board()
 
         return fun
 
-    # todo: take off the irrelevant perameters
-    def create_finished_word_action(self, button_name: str) -> Callable[[], None]:
+    def create_finished_word_action(self) -> Callable[[], None]:
         def fun() -> None:
             self._brain.finished_word()
             self.update_board()
-
-            print('word finished!')
-            # todo: do we need to do anything else?
         return fun
 
-    def create_start_game_action(self, button_name: str) -> Callable[[], None]:
+    def create_start_game_action(self) -> Callable[[], None]:
         def fun() -> None:
             # self._brain.start_game()
-            # self._gui.start_timer()
             self._start_time = time.time()
-            self._gui.change_to_main_screen()
-            print('game started in 3....2...1....go!')
+            self._gui.change_screen('main_game')
+            self.update_board()
+            # self._gui.change_to_main_screen()
         return fun
+
+    def create_game_over_action(self, button_name: str) -> Callable[[], None]:
+        def fun() -> None:
+            self._gui.change_screen('game_over')
+            self._brain.finished_word()
+            self._board = randomize_board()
+        return fun
+    """
+    def create_play_again_action(self, button_name: str) -> Callable[[], None]:
+        def fun() -> None:
+            self._gui.change_screen('main_game')
+        return fun
+    """
 
     def update_board(self):
         self._gui.update_chosen_words(self._brain.get_words_detected_list())

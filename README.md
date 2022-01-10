@@ -17,6 +17,7 @@ update all of the time
 exit messaage \ screen 
 make the screen not move 
 
+create new board
 
 n2h:
 scrolling box in the chosen words

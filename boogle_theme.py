@@ -16,10 +16,10 @@ OTHER = ['LightSkyBlue', 'LightSkyBlue1', 'LightSkyBlue2', 'SkyBlue']
 DEFAULT_BORDER = 'ROYALBLUE4'
 FONT_COLOR = 'black'
 FONT = 'Segoe UI Semilight'
-BUTTON_STYLE = {"font": (FONT, 10),
+BUTTON_STYLE = {"font": (FONT, 15, 'bold'),
                 "borderwidth": 1,
-                "height": 2,
-                "width": 5,
+                "height": 1,
+                "width": 4,
                 "relief": tk.RAISED,
                 "bg": PRIMARY_BUTTON_COLOR,
                 "activebackground": BUTTON_PRESSED_COLOR}
