@@ -13,7 +13,7 @@ Words_collection
 
 tasks: 
 1. work on timer - either in the FE or in the BE 
-2. entrancec window
+2. entranבק window
 3. fix buttons appearance 
 4. add time display 
 5. add messagebox 
