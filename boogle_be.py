@@ -78,7 +78,7 @@ class Boogle_brain:
         :return: list of tuples of all the letters that are optional to choose from
         """
         final_set = set()
-        if self.last_press is None:
+        if self._last_press is None:
             return final_set
         else:
             all_surrounding_tuples = surrounding_tuples(self._board, self._last_press)
