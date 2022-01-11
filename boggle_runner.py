@@ -30,7 +30,6 @@ class BoggleController:
         end_word_action = self.create_finished_word_action()
         self._gui.set_button_command('end_word', end_word_action)
         self._gui.set_score(self._brain.get_score())
-        self.new_game()
 
         start_game_action = self.create_start_game_action()
         self._gui.set_button_command('start_button', start_game_action)
@@ -40,6 +39,7 @@ class BoggleController:
 
         game_over_action = self.create_game_over_action()
         self._gui.set_button_command('game_over', game_over_action)
+        # self.new_game()
 
         play_again_action = self.create_start_game_action()
         self._gui.set_button_command('play_again', play_again_action)
