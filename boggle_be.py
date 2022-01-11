@@ -1,5 +1,14 @@
 class Boogle_brain:
-
+    """
+    the back end of the game boggle
+    manages what that happens in the game:
+    - receives the input of the player
+    - outputs the buttons that should be disabled
+    - outputs the buttons thant need to be colored as pressed
+    - outputs the buttons that are possible to be pressed later
+    - manage what massage should be given to the player
+    - keeps date of the score and give it out on demand
+    """
     def __init__(self, cur_board, words_list):
         self._board = cur_board
         self._cur_word = ""
@@ -121,15 +130,6 @@ class Boogle_brain:
             temp = "Have fun!"
 
         return temp
-
-
-def check_press_ok(last_press, cur_press):
-    cur_row, cur_col = cur_press
-    last_row, last_col = last_press
-    if abs(cur_row - last_row) > 1 or abs(cur_col - last_col) > 1:
-        return False
-    else:
-        return True
 
 
 def surrounding_tuples(board, cur_tuple) -> list:
