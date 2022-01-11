@@ -122,7 +122,6 @@ class Boogle_brain:
         if not temp:
             temp = "Have fun!"
 
-        print(temp)
         return temp
 
 
