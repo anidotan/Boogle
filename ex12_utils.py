@@ -218,25 +218,37 @@ def get_length(cur_path, board, stop_parameter: bool):
 
 
 
+
+
+
 def max_score_paths(board, words):
-    start = time.time() # remove
-    print("start", start)
     number_all_cells = len(board) * len(board[0])
     dict_of_paths_by_len = creat_generic_dict(number_all_cells)
     list_paths = []
     all_loc = list_all_locations(board)
     for start_locatin in all_loc:
-        print("middle", time.time()) #remove
         temp_list = [start_locatin]
-        helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len)
+        cur_word = word_from_path(temp_list,board)
+        rel_words = minimize_words(cur_word, words)
+        # old_helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len)
+        helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len, rel_words, cur_word)
         list_paths.clear()
 
     print(dict_of_paths_by_len) # remove
-    list_to_return = extract_greatest_from_dict(dict_of_paths_by_len)
-    end = time.time()
-    print("end", end)
-    print("total", end - start)
+    list_to_return = extract_greatest_from_dict(dict_of_paths_by_len, board)
+
     return list_to_return
+
+
+def minimize_words(cur_word, cur_list):
+    """
+    returns a relevant iterable of all the words that stars with a given starting word
+    :param cur_word: the letters you want all the other words to start with
+    :param cur_list: current iterable
+    :return: a relevant iterable
+    """
+    rel_list = filter(lambda x: x.startswith(cur_word), cur_list)
+    return list(rel_list)
 
 
 def creat_generic_dict(num_index) -> dict:
@@ -251,12 +263,12 @@ def creat_generic_dict(num_index) -> dict:
     return the_dict
 
 
-def extract_greatest_from_dict(dict_paths):
+def extract_greatest_from_dict(dict_paths, board):
     list_to_return = []
     for i in range(16, 2, -1):
         cur_list = dict_paths[i]
         if cur_list:
-            list_to_return = list_no_double_words(cur_list)  # todo - make sure no double words
+            list_to_return = list_no_double_words(cur_list, board)  # todo - make sure no double words
             return list_to_return
 
 
@@ -277,16 +289,19 @@ def list_no_double_words(list_of_paths, board):
     return final_list_paths
 
 
-def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, dict_to_add):
+def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, dict_to_add, rel_words, cur_word):
     relevant_len = get_length(cur_path, board, stop_parameter)
-    print("cur len", len(cur_path))  # remove
-    print("bool",word_from_path(cur_path, board) in all_words)
-    print(dict_to_add)
+
+    len_of_filtered = len(rel_words)
+
+
     if 2 < relevant_len and relevant_len <= req_len and word_from_path(cur_path, board) in all_words:
         add_path_to_dict(cur_path, dict_to_add)
 
-    if relevant_len == req_len:
-        cur_word = word_from_path(cur_path, board)
+    if not rel_words:
+        return
+
+    elif relevant_len == req_len:
         if cur_word in all_words:
             all_paths.append(cur_path[::])
             return
@@ -298,8 +313,10 @@ def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board,
             new_row, new_col = add_location_tuples(last_cell, neighbor)
             location_tuple = tuple((new_row, new_col))
             if location_in_limits(new_row, new_col, board) and location_tuple not in cur_path:
+                cur_word += board[new_row][new_col]
                 cur_path.append(location_tuple)
-                helper_paths_with_dict(all_paths, cur_path, req_len, board, location_tuple, all_words, stop_parameter, dict_to_add)
+                new_rel_words = minimize_words(cur_word, rel_words)
+                helper_paths_with_dict(all_paths, cur_path, req_len, board, location_tuple, all_words, stop_parameter, dict_to_add, new_rel_words, cur_word)
                 cur_path.pop()
         return
 
@@ -316,13 +333,49 @@ def add_path_to_dict(cur_path, dict_paths) -> None:
     cur_list_in_dict.append(cur_path[::])
 
 
+def old_helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int,
+                           board, last_cell: tuple, all_words,
+                           stop_parameter: bool, dict_to_add):
+    relevant_len = get_length(cur_path, board, stop_parameter)
+
+    if 2 < relevant_len and relevant_len <= req_len and word_from_path(
+            cur_path, board) in all_words:
+        add_path_to_dict(cur_path, dict_to_add)
+
+    if relevant_len == req_len:
+        cur_word = word_from_path(cur_path, board)
+        if cur_word in all_words:
+            all_paths.append(cur_path[::])
+            return
+    elif relevant_len > req_len:
+        return
+
+    else:
+        for neighbor in NEIGHBORS:
+            new_row, new_col = add_location_tuples(last_cell, neighbor)
+            location_tuple = tuple((new_row, new_col))
+            if location_in_limits(new_row, new_col,
+                                  board) and location_tuple not in cur_path:
+                cur_path.append(location_tuple)
+                helper_paths_with_dict(all_paths, cur_path, req_len, board,
+                                       location_tuple, all_words,
+                                       stop_parameter, dict_to_add)
+                cur_path.pop()
+        return
+
+
 if __name__ == '__main__':
     words_list = list_from_file("boggle_dict.txt")
-    b1 = [['T', 'H', 'E', 'T'],
-         ['O', 'H', 'N', 'D'],
-         ['V', 'U', 'F', 'U'],
-         ['H', 'O', 'A', 'V']]
+    b1 = [['A', 'B', 'B', 'R'],
+         ['A', 'I', 'V', 'E'],
+         ['T', 'I', 'O', 'N'],
+         ['H', 'O', 'A', 'S']]
 
-
+    # ABBREVIATIONS
+    # rel = minimize_words("ABBO", words_list)
+    # for it in rel:
+    #     print(it)
+    # print("ABBOTS" in rel)
+    # print("ABBOTS" in words_list)
 
     print(max_score_paths(b1,words_list))
