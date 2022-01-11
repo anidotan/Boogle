@@ -1,7 +1,7 @@
 from boggle_be import Boogle_brain, list_from_file
 from boggle_board_randomizer import randomize_board
 from boggle_fe import Boogle_GUI
-from typing import Callable, Tuple, List, Dict
+from typing import Callable, Tuple
 
 # get a list of all the words
 words_list = list_from_file("boggle_dict.txt")
