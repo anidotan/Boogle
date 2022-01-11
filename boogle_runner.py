@@ -4,14 +4,12 @@ from boggle_board_randomizer import randomize_board
 from boogle import list_from_file
 from boogle_fe import Boogle_GUI
 from typing import Callable, Tuple, List, Dict
-import datetime
+
 
 # decide the time of the game in seconds
 GAME_TIME = 180
 # get a list of all the words
 words_list = list_from_file("boggle_dict.txt")
-
-# every button has a func from the logic - needs a gui and a
 
 
 class BoggleController:
@@ -39,12 +37,6 @@ class BoggleController:
 
         game_over_action = self.create_game_over_action('game_over')
         self._gui.set_button_command('game_over', game_over_action)
-
-        # start_game_action = self.create_start_game_action('play_again')
-        # self._gui.set_button_command('play_again', start_game_action)
-        # self._gui.set_score(0)
-        # self._gui.update_message_box(self._brain.get_message())
-        # self._start_time = None
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
         def fun() -> None:
@@ -75,12 +67,6 @@ class BoggleController:
             self._brain.finished_word()
             self._board = randomize_board()
         return fun
-    """
-    def create_play_again_action(self, button_name: str) -> Callable[[], None]:
-        def fun() -> None:
-            self._gui.change_screen('main_game')
-        return fun
-    """
 
     def update_board(self):
         self._gui.update_chosen_words(self._brain.get_words_detected_list())
@@ -108,66 +94,6 @@ class BoggleController:
     def run(self) -> None:
         self._gui.run()
 
-    """
-    # in the BE
-    def connect_buttons(buttons):
-        for b in buttons:
-            # if enter button
-            b.set_button_command(action)
-    #        letter buttons
-    # start
-    # end round
-    
-        for button_loc in buttons:
-            self.
-    
-        def create_button_action(self, button_text: str) -> Callable[[], None]:
-            def fun() -> None:
-                self._model.type_in(button_text)
-                self._gui.set_display(self._model.get_display())
-    
-            return fun
-        
-    """
-
-
-def run_single_game():
-    # get a board
-    new_board = randomize_board()
-    # creat a game brain with the cur board and words list
-    brain = Boogle_brain(new_board, words_list)
-    # flag of the game
-    game_finished = False
-    # creat GUI
-    game_gui = Boogle_GUI(new_board)
-
-    while not game_finished:
-        # start counter
-        time_counter = time.perf_counter()
-        # run until time is over
-        if time_counter < GAME_TIME:
-            # at the start of every round
-            game_gui.color_picked_letters(brain.letters_colored_pressed())
-            game_gui.color_optional_letters(brain.letter_optional_color())
-            game_gui.set_score(brain.get_score())
-            game_gui.set_time(convert_to_time(time_counter))
-            game_gui.show_chosen_words(brain.get_words_detected_list())
-
-            # location_pressed = game_gui.get_pressed_key() # get letter press
-            # if location_pressed is not None:  # if a cube was chosen
-            #     brain.letter_input(location_pressed)
-
-
-
-            word_finished_flag = game_gui.get_word_ended()
-            if word_finished_flag:
-                brain.finished_word()
-
-
-        else:
-            game_finished = True
-            print("finished")
-
 
 def convert_to_time(seconds):
     """
@@ -190,6 +116,5 @@ if __name__ == '__main__':
     # run_single_game()
     controller = BoggleController()
     controller.run()
-    print("hey")
 
 
