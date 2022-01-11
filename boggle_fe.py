@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import font
+import pygame
 from typing import Tuple, List, Callable, Set, Dict
 from boggle_theme import *
 
@@ -29,6 +30,7 @@ class Boogle_GUI:
         self._boggle_img = tk.PhotoImage(file='./Boggle-logo.png')
         self._boggle_img_big = tk.PhotoImage(file='./Boggle-logo-big.png')
         self._timer_callback = None
+        pygame.mixer.init()
 
         # welcome screen
         self._welcome_screen = tk.Frame(self._root, bg=DEFAULT_BG_COLOR)
@@ -50,6 +52,12 @@ class Boogle_GUI:
         self._header = tk.Frame()
         self._header_title = tk.Label(self._main_game_screen, image=self._boggle_img, bg=DEFAULT_BG_COLOR)
         self._header_title.grid(row=0, column=0, columnspan=10, rowspan=3, sticky=tk.S, pady=10)
+        self._boogle_surprise_button = tk.Button(self._main_game_screen, text='BOOGLE\nBOOGLE',
+                                                 bg=LETTER_DISABLED_COLOR, fg='black', width=7,
+                                                 height=2,
+                                                 activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 7),
+                                                 command=self.play)
+        self._boogle_surprise_button.grid(row=0, column=9, columnspan=2)
 
         # build upper frame
         self._upper_frame = tk.Frame(self._main_game_screen, bg=DEFAULT_BG_COLOR)
@@ -69,7 +77,6 @@ class Boogle_GUI:
         self.build_side_grid(self._middle_frame)
         self.build_bottom_grid(self._bottom_frame)
 
-    ######## BUILDERS ########
     def build_entrance_screen(self, parent: tk.Frame) -> None:
         """
         build the welcome frame
@@ -80,7 +87,7 @@ class Boogle_GUI:
         self._secondary_title = tk.Label(parent, text='ARE YOU READY?!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                          font=(FONT, 15))
         self._secondary_title.grid(row=5, column=0, columnspan=5, pady=30, sticky=tk.NSEW)
-        self._start_button = tk.Button(parent, text='START', bg=PRIMARY_BUTTON_COLOR, fg='black', width=9, height=2,
+        self._start_button = tk.Button(parent, text='START', bg=PRIMARY_BUTTON_COLOR, fg='black', width=8, height=1,
                                        activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 12, 'bold'))
         self._start_button.grid(row=7, column=2, sticky=tk.S, pady=20)
         self._buttons['start_button'] = self._start_button
@@ -95,7 +102,7 @@ class Boogle_GUI:
         self._subtitle = tk.Label(parent, text='Good Job!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                   font=(FONT, 20))
         self._subtitle.grid(row=2, column=0, columnspan=5, pady=30, sticky=tk.NSEW)
-        self._play_again_button = tk.Button(parent, text='Play Again', bg=PRIMARY_BUTTON_COLOR, fg='black', width=8,
+        self._play_again_button = tk.Button(parent, text='PLAY AGAIN', bg=PRIMARY_BUTTON_COLOR, fg='black', width=10,
                                             height=2,
                                             activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 10))
         self._play_again_button.grid(row=3, column=2, sticky=tk.S, pady=20)
@@ -148,7 +155,7 @@ class Boogle_GUI:
         """
         build bottom grid
         """
-        self._end_game_button = tk.Button(parent, text='End Game', bg=PRIMARY_BUTTON_COLOR, fg='black', width=9,
+        self._end_game_button = tk.Button(parent, text='END GAME', bg=PRIMARY_BUTTON_COLOR, fg='black', width=11,
                                           height=1,
                                           activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 9))
         self._end_game_button.grid(row=2, column=5, sticky=tk.S, pady=5)
@@ -179,7 +186,6 @@ class Boogle_GUI:
         self._end_word.grid(row=6, pady=10)
         self._buttons['end_word'] = self._end_word
 
-    ######## SETTERS ########
     def set_button_command(self, button_name: str, cmd: Callable[[], None]) -> None:
         """
         set the command the button is going to activate when pressed
@@ -256,7 +262,6 @@ class Boogle_GUI:
         """
         self._message_box.configure(text=message)
 
-    ######## GETTERS #######
     def get_letters(self):
         """
         :return: letters Dict
@@ -349,3 +354,10 @@ class Boogle_GUI:
         self._letters: Dict[Tuple[int, int]: tk.Button] = {}
         self.build_middle_grid(self._middle_frame)
         self.reset_timer()
+
+    def play(self):
+        """
+        plays music
+        """
+        pygame.mixer.music.load("./I_LIKE_TO_BOGGLE_BOGGLE.mp3")
+        pygame.mixer.music.play(loops=0)
