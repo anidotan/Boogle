@@ -1,5 +1,4 @@
 from boogle import list_from_file  # remove
-import time # remove
 
 NEIGHBORS = [(0, 1), (0, -1), (1, 0), (-1, 0), (-1, 1), (-1, -1), (1, 1), (1, -1)]
 
@@ -164,7 +163,7 @@ def find_length_n_words(n, board, words):
 
     for start_locatin in all_loc:
         temp_list = [start_locatin]
-        helper_length_n(final_list, temp_list, n, board, start_locatin,words, False)
+        helper_length_n(final_list, temp_list, n, board, start_locatin, words, False)
 
     return final_list
 
@@ -222,6 +221,12 @@ def get_length(cur_path, board, stop_parameter: bool):
 
 
 def max_score_paths(board, words):
+    """
+    :param board: the current board
+    :param words: iterable of all the legal words
+    :return: list of all the paths with max score
+        without double paths that give you the same word
+    """
     number_all_cells = len(board) * len(board[0])
     dict_of_paths_by_len = creat_generic_dict(number_all_cells)
     list_paths = []
@@ -230,7 +235,7 @@ def max_score_paths(board, words):
         temp_list = [start_locatin]
         cur_word = word_from_path(temp_list,board)
         rel_words = minimize_words(cur_word, words)
-        # old_helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len)
+        # old_helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len) remove
         helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len, rel_words, cur_word)
         list_paths.clear()
 
@@ -264,21 +269,35 @@ def creat_generic_dict(num_index) -> dict:
 
 
 def extract_greatest_from_dict(dict_paths, board):
+    """
+    from dict of paths that is categorized by the length of the path - will
+    extract the longest legal paths that don't give replicas of same words
+    :param dict_paths: dict of lists of paths in board, categorized by the
+    length of the path
+    :param board: current board
+    :return: list of paths
+    """
     list_to_return = []
     for i in range(16, 2, -1):
         cur_list = dict_paths[i]
         if cur_list:
             list_to_return = list_no_double_words(cur_list, board)  # todo - make sure no double words
             return list_to_return
-
+    return list_to_return
 
 # def list_no_double_words(list_of_paths):
-#     as_set = set(list_of_paths)
+#     as_set = set(list_of_paths) remove
 #     as_list = list(as_set)
 #     return as_list
 
 
 def list_no_double_words(list_of_paths, board):
+    """
+    returns the list without replicas that give ouy the same word
+    :param list_of_paths: list of all paths of words in the same length
+    :param board: current board
+    :return: list of paths without double paths - paths that give out the same word
+    """
     list_of_words = []
     final_list_paths = []
     for cur_path in list_of_paths:
@@ -290,10 +309,20 @@ def list_no_double_words(list_of_paths, board):
 
 
 def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, dict_to_add, rel_words, cur_word):
+    """
+    :param all_paths: list of all the paths in the current length
+    :param cur_path: the current path that is built
+    :param req_len: the desired length
+    :param board: current board
+    :param last_cell: the last cell that had been added
+    :param all_words: iterable of all the legal words
+    :param stop_parameter: according to the type
+    :param dict_to_add: the dictionary of all the paths in the board, catagorized by length
+    :param rel_words: list of all the relevant words according to the current word that was created so far
+    :param cur_word: the current word
+    :return: none - adds the relevant to the dict without returning
+    """
     relevant_len = get_length(cur_path, board, stop_parameter)
-
-    len_of_filtered = len(rel_words)
-
 
     if 2 < relevant_len and relevant_len <= req_len and word_from_path(cur_path, board) in all_words:
         add_path_to_dict(cur_path, dict_to_add)
@@ -337,7 +366,7 @@ def old_helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int,
                            board, last_cell: tuple, all_words,
                            stop_parameter: bool, dict_to_add):
     relevant_len = get_length(cur_path, board, stop_parameter)
-
+    # remove
     if 2 < relevant_len and relevant_len <= req_len and word_from_path(
             cur_path, board) in all_words:
         add_path_to_dict(cur_path, dict_to_add)
@@ -369,7 +398,7 @@ if __name__ == '__main__':
     b1 = [['A', 'B', 'B', 'R'],
          ['A', 'I', 'V', 'E'],
          ['T', 'I', 'O', 'N'],
-         ['H', 'O', 'A', 'S']]
+         ['H', 'O', 'S', 'S']]
 
     # ABBREVIATIONS
     # rel = minimize_words("ABBO", words_list)
