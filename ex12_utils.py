@@ -1,4 +1,4 @@
-from boogle import list_from_file  # remove
+from boggle import list_from_file  # remove
 import time # remove
 
 NEIGHBORS = [(0, 1), (0, -1), (1, 0), (-1, 0), (-1, 1), (-1, -1), (1, 1), (1, -1)]
@@ -220,22 +220,22 @@ def get_length(cur_path, board, stop_parameter: bool):
 
 def max_score_paths(board, words):
     start = time.time() # remove
-    print("start", start)
+    # print("start", start)
     number_all_cells = len(board) * len(board[0])
     dict_of_paths_by_len = creat_generic_dict(number_all_cells)
     list_paths = []
     all_loc = list_all_locations(board)
     for start_locatin in all_loc:
-        print("middle", time.time()) #remove
+        # print("middle", time.time()) #remove
         temp_list = [start_locatin]
         helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len)
         list_paths.clear()
 
-    print(dict_of_paths_by_len) # remove
+    # print(dict_of_paths_by_len) # remove
     list_to_return = extract_greatest_from_dict(dict_of_paths_by_len)
     end = time.time()
-    print("end", end)
-    print("total", end - start)
+    # print("end", end)
+    # print("total", end - start)
     return list_to_return
 
 
@@ -279,9 +279,9 @@ def list_no_double_words(list_of_paths, board):
 
 def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, dict_to_add):
     relevant_len = get_length(cur_path, board, stop_parameter)
-    print("cur len", len(cur_path))  # remove
-    print("bool",word_from_path(cur_path, board) in all_words)
-    print(dict_to_add)
+    # print("cur len", len(cur_path))  # remove
+    # print("bool",word_from_path(cur_path, board) in all_words)
+    # print(dict_to_add)
     if 2 < relevant_len and relevant_len <= req_len and word_from_path(cur_path, board) in all_words:
         add_path_to_dict(cur_path, dict_to_add)
 
@@ -325,4 +325,4 @@ if __name__ == '__main__':
 
 
 
-    print(max_score_paths(b1,words_list))
+    # print(max_score_paths(b1,words_list))

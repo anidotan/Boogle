@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import font
 from typing import Optional, Tuple, List, Callable, Set, Dict
-from boogle_theme import *
+from boggle_theme import *
 
 DEFAULT_TIME = '03:00'
 
@@ -13,7 +13,7 @@ class Boogle_GUI:
         # build tkinter base
         self._root = tk.Tk()
         self._root.title('Welcome to Boogle!')
-        self._root.geometry('500x500')
+        self._root.geometry('500x600')
         self._root.configure(bg=DEFAULT_BG_COLOR)
         self._root.resizable(False, False)
         self._main_window = self._root
@@ -26,6 +26,9 @@ class Boogle_GUI:
         self._buttons: Dict[str: tk.Button] = {}
         self._screens = {}
         self._current_screen = None
+        self._boggle_img = tk.PhotoImage(file='./Boggle-logo.png')
+        self._boggle_img_big = tk.PhotoImage(file='./Boggle-logo-big.png')
+
 
         # welcome screen
         self._welcome_screen = tk.Frame(self._root, bg=DEFAULT_BG_COLOR)
@@ -43,17 +46,22 @@ class Boogle_GUI:
         self._main_game_screen = tk.Frame(self._root, bg=DEFAULT_BG_COLOR)
         self._screens['main_game'] = self._main_game_screen
 
+        # build header
+        self._header = tk.Frame()
+        self._header_title = tk.Label(self._main_game_screen, image=self._boggle_img, bg=DEFAULT_BG_COLOR)
+        self._header_title.grid(row=0, column=0, columnspan=10, rowspan=3, sticky=tk.S, pady=10)
+
         # build upper frame
         self._upper_frame = tk.Frame(self._main_game_screen, bg=DEFAULT_BG_COLOR)
-        self._upper_frame.grid(row=0, rowspan=2, column=0, columnspan=10, sticky=tk.N)
+        self._upper_frame.grid(row=3, rowspan=2, column=0, columnspan=10, sticky=tk.N)
 
         # build middle frame
         self._middle_frame = tk.Frame(self._main_game_screen, bg=DEFAULT_BG_COLOR)
-        self._middle_frame.grid(row=2, rowspan=6, column=0, columnspan=10)
+        self._middle_frame.grid(row=5, rowspan=4, column=0, columnspan=10)
 
         # build bottom frame
         self._bottom_frame = tk.Frame(self._main_game_screen, bg=DEFAULT_BG_COLOR)
-        self._bottom_frame.grid(row=8, rowspan=3, column=0, columnspan=10, sticky=tk.S, pady=10)
+        self._bottom_frame.grid(row=9, rowspan=2, column=0, columnspan=10, sticky=tk.S)
 
         # build other sub-frames
         self.build_top_grid(self._upper_frame)
@@ -63,15 +71,14 @@ class Boogle_GUI:
 
     ######## BUILDERS ########
     def build_entrance_screen(self, parent):
-        self._boogle_title = tk.Label(parent, text='Welcome to Boogle!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
-                                      font=(FONT, 30, 'bold'))
-        self._boogle_title.grid(row=0, column=0, columnspan=5, pady=10, sticky=tk.NSEW)
+        self._boogle_title = tk.Label(parent, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR, image=self._boggle_img_big, font=(FONT, 10, 'bold'))
+        self._boogle_title.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=tk.NSEW)
         self._secondary_title = tk.Label(parent, text='ARE YOU READY?!', bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                          font=(FONT, 15))
-        self._secondary_title.grid(row=2, column=0, columnspan=5, pady=30, sticky=tk.NSEW)
+        self._secondary_title.grid(row=5, column=0, columnspan=5, pady=30, sticky=tk.NSEW)
         self._start_button = tk.Button(parent, text='START', bg=PRIMARY_BUTTON_COLOR, fg='black', width=9, height=2,
                                        activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 12, 'bold'))
-        self._start_button.grid(row=3, column=2, sticky=tk.S, pady=20)
+        self._start_button.grid(row=7, column=2, sticky=tk.S, pady=20)
         self._buttons['start_button'] = self._start_button
 
     def build_game_over_screen(self, parent):
@@ -84,13 +91,13 @@ class Boogle_GUI:
         self._play_again_button = tk.Button(parent, text='Play Again', bg=PRIMARY_BUTTON_COLOR, fg='black', width=9,
                                             height=2,
                                             activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 10, 'bold'))
-        # self._play_again_button.grid(row=3, column=2, sticky=tk.S, pady=20)
+        self._play_again_button.grid(row=3, column=2, sticky=tk.S, pady=20)
         self._buttons['play_again'] = self._play_again_button
 
     def build_top_grid(self, parent):
         self._message_box = tk.Label(parent, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
                                      font=(FONT, 15, 'bold'))
-        self._message_box.grid(row=0, rowspan=2, column=0, columnspan=10, sticky=tk.N, pady=5)
+        self._message_box.grid(row=0, rowspan=2, column=0, columnspan=10, sticky=tk.N)
 
     def build_letter_grid(self, parent):
         self._letter_board_contrainer = tk.Frame(parent, bg=DEFAULT_BG_COLOR)
@@ -104,6 +111,10 @@ class Boogle_GUI:
                 letter_loc = (row, col)
                 self._letters[letter_loc] = letter
 
+        self._time = tk.Label(parent, text=DEFAULT_TIME, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+                              font=(FONT, 30, 'bold'))
+        self._time.grid(row=4, column=5, columnspan=1, sticky=tk.W, rowspan=2, pady=10)
+
     def create_button(self, parent, row, col, label, rowspan: int = 1, columnspan: int = 1,
                       sticky=tk.NSEW) -> tk.Button:
         button = tk.Button(parent, text=label, **BUTTON_STYLE)
@@ -111,17 +122,17 @@ class Boogle_GUI:
         return button
 
     def build_bottom_grid(self, parent):
-        self._time = tk.Label(parent, text=DEFAULT_TIME, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
-                              font=(FONT, 20))
-        self._time.grid(row=0, column=5, columnspan=2, rowspan=2, pady=30)
+        # self._time = tk.Label(parent, text=DEFAULT_TIME, bg=DEFAULT_BG_COLOR, fg=FONT_COLOR,
+        #                       font=(FONT, 20))
+        # self._time.grid(row=0, column=5, columnspan=2, rowspan=2, pady=30)
         self._end_game_button = tk.Button(parent, text='End Game', bg=PRIMARY_BUTTON_COLOR, fg='black', width=8,
                                           height=1,
-                                          activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 8))
-        self._end_game_button.grid(row=2, column=5, sticky=tk.S)
+                                          activebackground=BUTTON_PRESSED_COLOR, font=(FONT, 9))
+        self._end_game_button.grid(row=2, column=5, sticky=tk.S, pady=10)
         self._buttons['game_over'] = self._end_game_button
         self._footer = tk.Label(parent, text=f'Built by the awesome Zuk Arbell and Ani Dotan', bg=DEFAULT_BG_COLOR,
-                                fg=FONT_COLOR,
-                                font=(FONT, 8))
+                                fg='white',
+                                font=(FONT,8))
         self._footer.grid(row=3, column=5, sticky=tk.S)
 
     def build_side_grid(self, parent):
@@ -243,7 +254,7 @@ class Boogle_GUI:
         self._current_screen.grid_remove()
         new_screen = self._screens[new_screen_name]
         self._current_screen = new_screen
-        new_screen.grid(row=0, column=0, rowspan=10, columnspan=10)
+        new_screen.grid(row=0, column=0, rowspan=11, columnspan=10)
         if new_screen_name == 'main_game':
             self.advance_timer()
         elif new_screen_name == 'game_over':
@@ -254,3 +265,14 @@ class Boogle_GUI:
             if button['state'] != tk.NORMAL:
                 self.deactivate_button(button, deactivate=False)
             self.color_button(button, LETTER_COLOR)
+
+    def set_new_game(self, new_board):
+        self._board = new_board
+        self._letters: Dict[Tuple[int, int]: tk.Button] = {}
+        self._time_left = 180
+        self._current_screen = self._welcome_screen
+
+
+
+
+

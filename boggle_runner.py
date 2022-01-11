@@ -1,8 +1,8 @@
 import time
-from boogle_be import Boogle_brain
+from boggle_be import Boogle_brain
 from boggle_board_randomizer import randomize_board
-from boogle import list_from_file
-from boogle_fe import Boogle_GUI
+from boggle import list_from_file
+from boggle_fe import Boogle_GUI
 from typing import Callable, Tuple, List, Dict
 import datetime
 
@@ -27,23 +27,24 @@ class BoggleController:
             action = self.create_letter_action(letter_location)
             self._gui.set_letter_command(letter_location, action)
 
-        end_word_action = self.create_finished_word_action('end_word')
+        end_word_action = self.create_finished_word_action()
         self._gui.set_button_command('end_word', end_word_action)
         self._gui.set_score(self._brain.get_score())
+        self.new_game()
 
-        start_game_action = self.create_start_game_action('start_button')
+        start_game_action = self.create_start_game_action()
         self._gui.set_button_command('start_button', start_game_action)
         self._gui.update_message_box(self._brain.get_message())
         self._gui.set_score(0)
         self._start_time = None
 
-        game_over_action = self.create_game_over_action('game_over')
+        game_over_action = self.create_game_over_action()
         self._gui.set_button_command('game_over', game_over_action)
 
-        # start_game_action = self.create_start_game_action('play_again')
-        # self._gui.set_button_command('play_again', start_game_action)
+        play_again_action = self.create_start_game_action()
+        self._gui.set_button_command('play_again', play_again_action)
         # self._gui.set_score(0)
-        # self._gui.update_message_box(self._brain.get_message())
+        self._gui.update_message_box(self._brain.get_message())
         # self._start_time = None
 
     def create_letter_action(self, button_loc: Tuple[int,int]) -> Callable[[], None]:
@@ -69,11 +70,12 @@ class BoggleController:
             # self._gui.change_to_main_screen()
         return fun
 
-    def create_game_over_action(self, button_name: str) -> Callable[[], None]:
+    def create_game_over_action(self) -> Callable[[], None]:
         def fun() -> None:
             self._gui.change_screen('game_over')
             self._brain.finished_word()
             self._board = randomize_board()
+            self._gui.set_new_game(self._board)
         return fun
     """
     def create_play_again_action(self, button_name: str) -> Callable[[], None]:

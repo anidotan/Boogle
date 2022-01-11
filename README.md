@@ -11,15 +11,17 @@ Game_Path
 Words_collection
 
 
-tasks:
-work on timer - either in the FE or in the BE:
-update all of the time 
-exit messaage \ screen 
-make the screen not move 
+tasks: 
 
-create new board
+presubmit - max 
 
-n2h:
-scrolling box in the chosen words
-exit screen
-quit game button 
+play again button 
+
+background 
+
+
+stuff:
+1. design 
+2. make the play again work 
+3. buttons 
+4. effects 
