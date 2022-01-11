@@ -1,7 +1,3 @@
-from boggle import list_from_file  # remove
-import time # remove
-from boggle import list_from_file  # remove
-
 NEIGHBORS = [(0, 1), (0, -1), (1, 0), (-1, 0), (-1, 1), (-1, -1), (1, 1), (1, -1)]
 
 
@@ -101,7 +97,7 @@ def find_length_n_paths(n, board, words):
 
     for start_locatin in all_loc:
         temp_list = [start_locatin]
-        helper_length_n(final_list, temp_list, n, board, start_locatin,words, True)
+        helper_length_n(final_list, temp_list, n, board, start_locatin,words, True, words)
     return final_list
 
 
@@ -165,12 +161,12 @@ def find_length_n_words(n, board, words):
 
     for start_locatin in all_loc:
         temp_list = [start_locatin]
-        helper_length_n(final_list, temp_list, n, board, start_locatin, words, False)
+        helper_length_n(final_list, temp_list, n, board, start_locatin, words, False, words)
 
     return final_list
 
 
-def helper_length_n(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool):
+def helper_length_n(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, updated_word_list):
     """
     helps to get disired path that gives out a legal path or word
     in the length of n. works in recorsion
@@ -185,7 +181,8 @@ def helper_length_n(all_paths: list, cur_path: list, req_len: int, board, last_c
     """
 
     relevant_len = get_length(cur_path, board, stop_parameter)
-
+    if not updated_word_list:
+        return
     if relevant_len == req_len:
         cur_word = word_from_path(cur_path, board)
         if cur_word in all_words:
@@ -200,7 +197,7 @@ def helper_length_n(all_paths: list, cur_path: list, req_len: int, board, last_c
             location_tuple = tuple((new_row, new_col))
             if location_in_limits(new_row, new_col, board) and location_tuple not in cur_path:
                 cur_path.append(location_tuple)
-                helper_length_n(all_paths, cur_path, req_len, board, location_tuple, all_words,stop_parameter)
+                helper_length_n(all_paths, cur_path, req_len, board, location_tuple, all_words,stop_parameter, minimize_words(word_from_path(cur_path,board),updated_word_list))
                 cur_path.pop()
         return
 
@@ -218,10 +215,6 @@ def get_length(cur_path, board, stop_parameter: bool):
         return len(word_from_path(cur_path, board))
 
 
-
-
-
-
 def max_score_paths(board, words):
     """
     :param board: the current board
@@ -237,14 +230,34 @@ def max_score_paths(board, words):
         temp_list = [start_locatin]
         cur_word = word_from_path(temp_list,board)
         rel_words = minimize_words(cur_word, words)
-        # old_helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len) remove
         helper_paths_with_dict(list_paths, temp_list, number_all_cells, board, start_locatin, words, True, dict_of_paths_by_len, rel_words, cur_word)
         list_paths.clear()
 
-    print(dict_of_paths_by_len) # remove
-    list_to_return = extract_greatest_from_dict(dict_of_paths_by_len, board)
-
+    list_to_return = all_score_paths(dict_of_paths_by_len, board)
     return list_to_return
+
+
+def all_score_paths(dict_paths, board):
+    """
+    extract from dictionary of paths all the legal paths in the board without
+    repeating the same words twice - if there are to ways to find a word it
+    will give the longer version
+    :param dict_paths: all paths in the board - categorized by length
+    :param board: current board
+    :return: list of all paths
+    """
+    list_words_found = []
+    final_list_paths = []
+    for i in range(16, 2 , -1):
+        cur_paths_list = dict_paths[i]
+
+        for cur_path in cur_paths_list:
+            cur_word = word_from_path(cur_path, board)
+            if cur_word not in list_words_found:
+                list_words_found.append(cur_word)
+                final_list_paths.append(cur_path)
+
+    return final_list_paths
 
 
 def minimize_words(cur_word, cur_list):
@@ -268,46 +281,6 @@ def creat_generic_dict(num_index) -> dict:
     for i in range(3, num_index + 1):
         the_dict[i] = []
     return the_dict
-
-
-def extract_greatest_from_dict(dict_paths, board):
-    """
-    from dict of paths that is categorized by the length of the path - will
-    extract the longest legal paths that don't give replicas of same words
-    :param dict_paths: dict of lists of paths in board, categorized by the
-    length of the path
-    :param board: current board
-    :return: list of paths
-    """
-    list_to_return = []
-    for i in range(16, 2, -1):
-        cur_list = dict_paths[i]
-        if cur_list:
-            list_to_return = list_no_double_words(cur_list, board)  # todo - make sure no double words
-            return list_to_return
-    return list_to_return
-
-# def list_no_double_words(list_of_paths):
-#     as_set = set(list_of_paths) remove
-#     as_list = list(as_set)
-#     return as_list
-
-
-def list_no_double_words(list_of_paths, board):
-    """
-    returns the list without replicas that give ouy the same word
-    :param list_of_paths: list of all paths of words in the same length
-    :param board: current board
-    :return: list of paths without double paths - paths that give out the same word
-    """
-    list_of_words = []
-    final_list_paths = []
-    for cur_path in list_of_paths:
-        cur_word = word_from_path(cur_path, board)
-        if cur_word not in list_of_words:
-            list_of_words.append(cur_word)
-            final_list_paths.append(cur_path)
-    return final_list_paths
 
 
 def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board, last_cell: tuple, all_words, stop_parameter: bool, dict_to_add, rel_words, cur_word):
@@ -349,6 +322,7 @@ def helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int, board,
                 new_rel_words = minimize_words(cur_word, rel_words)
                 helper_paths_with_dict(all_paths, cur_path, req_len, board, location_tuple, all_words, stop_parameter, dict_to_add, new_rel_words, cur_word)
                 cur_path.pop()
+                cur_word = cur_word[:-1]
         return
 
 
@@ -362,51 +336,3 @@ def add_path_to_dict(cur_path, dict_paths) -> None:
     len_path = len(cur_path)
     cur_list_in_dict = dict_paths[len_path]
     cur_list_in_dict.append(cur_path[::])
-
-
-def old_helper_paths_with_dict(all_paths: list, cur_path: list, req_len: int,
-                           board, last_cell: tuple, all_words,
-                           stop_parameter: bool, dict_to_add):
-    relevant_len = get_length(cur_path, board, stop_parameter)
-    # remove
-    if 2 < relevant_len and relevant_len <= req_len and word_from_path(
-            cur_path, board) in all_words:
-        add_path_to_dict(cur_path, dict_to_add)
-
-    if relevant_len == req_len:
-        cur_word = word_from_path(cur_path, board)
-        if cur_word in all_words:
-            all_paths.append(cur_path[::])
-            return
-    elif relevant_len > req_len:
-        return
-
-    else:
-        for neighbor in NEIGHBORS:
-            new_row, new_col = add_location_tuples(last_cell, neighbor)
-            location_tuple = tuple((new_row, new_col))
-            if location_in_limits(new_row, new_col,
-                                  board) and location_tuple not in cur_path:
-                cur_path.append(location_tuple)
-                helper_paths_with_dict(all_paths, cur_path, req_len, board,
-                                       location_tuple, all_words,
-                                       stop_parameter, dict_to_add)
-                cur_path.pop()
-        return
-
-
-if __name__ == '__main__':
-    words_list = list_from_file("boggle_dict.txt")
-    b1 = [['A', 'B', 'B', 'R'],
-         ['A', 'I', 'V', 'E'],
-         ['T', 'I', 'O', 'N'],
-         ['H', 'O', 'S', 'S']]
-
-    # ABBREVIATIONS
-    # rel = minimize_words("ABBO", words_list)
-    # for it in rel:
-    #     print(it)
-    # print("ABBOTS" in rel)
-    # print("ABBOTS" in words_list)
-
-    print(max_score_paths(b1,words_list))
