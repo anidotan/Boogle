@@ -1,3 +1,10 @@
+######################################################################
+# FILE:boggle12.py
+# WRITER:Zuk_Arbell ,zuka, 205937139 and Anina Dotan, anidotan, 208929232
+# EXERCISE:intro2cs1 ex12 2022
+# DESCRIPTION: a game of boggle
+######################################################################
+
 from boggle_be import Boogle_brain, list_from_file
 from boggle_board_randomizer import randomize_board
 from boggle_fe import Boogle_GUI
@@ -77,8 +84,8 @@ class BoggleController:
         return fun
 
     def config_letter_actions(self):
-        letters = self._gui.get_letters()
         # add action to each letter
+        letters = self._gui.get_letters()
         for letter_location in letters.keys():
             action = self.create_letter_action(letter_location)
             self._gui.set_letter_command(letter_location, action)

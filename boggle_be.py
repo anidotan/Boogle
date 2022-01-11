@@ -9,6 +9,7 @@ class Boogle_brain:
     - manage what massage should be given to the player
     - keeps date of the score and give it out on demand
     """
+
     def __init__(self, cur_board, words_list):
         self._board = cur_board
         self._cur_word = ""
@@ -66,11 +67,9 @@ class Boogle_brain:
             if cur_word not in self._words_found:
                 # add the score and board
                 self._words_found.append(cur_word)
-                self._score += num_cubes**2
-                # self._message = "you're word was correct!\nyou gained " + str(num_cubes**2) + " points"
+                self._score += num_cubes ** 2
                 self._message = "your word was correct!"
             else:
-                # self._message = "you already found this word,\ntry a different one"
                 self._message = "you already found this word, please try a different one"
             return True
         else:
