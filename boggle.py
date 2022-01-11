@@ -1,4 +1,3 @@
-
 def get_dimensions(board):
     return len(board), len(board[0])
 
@@ -56,6 +55,6 @@ def list_from_file(filepath):
 
 if __name__ == '__main__':
     # print(list_from_file("boggle_dict.txt"))
-    x= dict_words_game("boggle_dict.txt")
+    x = dict_words_game("boggle_dict.txt")
     # print(sorted(x[3]["A"]))
     print(get_all_locations())
