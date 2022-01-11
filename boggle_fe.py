@@ -8,7 +8,7 @@ DEFAULT_TIME = '03:00'
 
 class Boogle_GUI:
     def __init__(self, board):
-        self.__board = board
+        self._board = board
 
         # build tkinter base
         self._root = tk.Tk()
@@ -106,7 +106,7 @@ class Boogle_GUI:
             for col in range(4):
                 cell = tk.Frame(self._letter_board_contrainer, bg=DEFAULT_BG_COLOR, width=30, height=30)
                 cell.grid(row=row, column=col, padx=5, pady=5)
-                label = f'{self.__board[row][col]}'
+                label = f'{self._board[row][col]}'
                 letter = self.create_button(cell, row, col, label)
                 letter_loc = (row, col)
                 self._letters[letter_loc] = letter
@@ -270,7 +270,8 @@ class Boogle_GUI:
         self._board = new_board
         self._letters: Dict[Tuple[int, int]: tk.Button] = {}
         self._time_left = 180
-        self._current_screen = self._welcome_screen
+        self.reset_timer()
+        self.build_letter_grid(self._middle_frame)
 
 
 
