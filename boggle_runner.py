@@ -1,8 +1,7 @@
-from boggle_be import Boogle_brain
+from boggle_be import Boogle_brain, list_from_file
 from boggle_board_randomizer import randomize_board
-from boggle import list_from_file
 from boggle_fe import Boogle_GUI
-from typing import Callable, Tuple, List, Dict
+from typing import Callable, Tuple
 
 # get a list of all the words
 words_list = list_from_file("boggle_dict.txt")
@@ -16,16 +15,9 @@ class BoggleController:
         self._brain = Boogle_brain(self._board, words_list)
 
         self.config_letter_actions()
-        """
-        letters = self._gui.get_letters()
-        # add action to each letter
-        for letter_location in letters.keys():
-            action = self.create_letter_action(letter_location)
-            self._gui.set_letter_command(letter_location, action)
-        """
+
         self._gui.update_message_box(self._brain.get_message())
         self._gui.set_score(0)
-        # self._gui.set_score(self._brain.get_score())
 
         # set end word action
         end_word_action = self.create_finished_word_action()

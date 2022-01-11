@@ -1,5 +1,14 @@
 class Boogle_brain:
-
+    """
+    the back end of the game boggle
+    manages what that happens in the game:
+    - receives the input of the player
+    - outputs the buttons that should be disabled
+    - outputs the buttons thant need to be colored as pressed
+    - outputs the buttons that are possible to be pressed later
+    - manage what massage should be given to the player
+    - keeps date of the score and give it out on demand
+    """
     def __init__(self, cur_board, words_list):
         self._board = cur_board
         self._cur_word = ""
@@ -28,15 +37,13 @@ class Boogle_brain:
             self._disabled_buttons = all_locations_as_set(self._board)
             self._disabled_buttons.remove(location)
             return True
+
         else:
-            if not check_press_ok(self._last_press, location):  # todo - maybe i can delete this
-                return False
-            else:
-                self._cur_word += self._board[cur_row][cur_col]
-                self._last_press = location
-                self._pressed_tuples.add(location)
-                self._disabled_buttons.remove(location)
-                return True
+            self._cur_word += self._board[cur_row][cur_col]
+            self._last_press = location
+            self._pressed_tuples.add(location)
+            self._disabled_buttons.remove(location)
+            return True
 
     def finished_word(self) -> bool:
         """
@@ -125,15 +132,6 @@ class Boogle_brain:
         return temp
 
 
-def check_press_ok(last_press, cur_press):
-    cur_row, cur_col = cur_press
-    last_row, last_col = last_press
-    if abs(cur_row - last_row) > 1 or abs(cur_col - last_col) > 1:
-        return False
-    else:
-        return True
-
-
 def surrounding_tuples(board, cur_tuple) -> list:
     """
     :return: a list of all the tuples surrounding a given tuple
@@ -186,3 +184,14 @@ def all_locations_as_set(board):
 
     return final
 
+
+def list_from_file(filepath):
+    """
+    :param filepath: path to file
+    :return: list of all the words in the file
+    """
+    with open(filepath) as data_file:
+        words_list = []
+        for line in data_file:
+            words_list.append(line.strip())
+        return words_list
