@@ -28,15 +28,13 @@ class Boogle_brain:
             self._disabled_buttons = all_locations_as_set(self._board)
             self._disabled_buttons.remove(location)
             return True
+
         else:
-            if not check_press_ok(self._last_press, location):  # todo - maybe i can delete this
-                return False
-            else:
-                self._cur_word += self._board[cur_row][cur_col]
-                self._last_press = location
-                self._pressed_tuples.add(location)
-                self._disabled_buttons.remove(location)
-                return True
+            self._cur_word += self._board[cur_row][cur_col]
+            self._last_press = location
+            self._pressed_tuples.add(location)
+            self._disabled_buttons.remove(location)
+            return True
 
     def finished_word(self) -> bool:
         """
@@ -186,3 +184,14 @@ def all_locations_as_set(board):
 
     return final
 
+
+def list_from_file(filepath):
+    """
+    :param filepath: path to file
+    :return: list of all the words in the file
+    """
+    with open(filepath) as data_file:
+        words_list = []
+        for line in data_file:
+            words_list.append(line.strip())
+        return words_list
